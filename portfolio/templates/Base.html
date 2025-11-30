@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{% block title %} {%endblock%}</title>
+    <meta name="description" content="{% block desc %}{%endblock%}" />
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="icon" href="{%static 'assets/jpeg/gagan_professional_picture.png' %}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__content">
+        <div class="header__logo-container" >
+          <div class="header__logo-img-cont">
+            <img
+              src="{% static 'assets/jpeg/gagan_professional_picture.png' %}"
+              alt="Gagandeep Logo Image"
+              class="header__logo-img"
+            
+            />
+          </div>
+          <span class="header__logo-sub" >Gagandeep Singh</span>
+        </div>
+        <div class="header__main">
+          <ul class="header__links">
+            <li class="header__link-wrapper">
+              <a href="/" class="header__link"> Home </a>
+            </li>
+            <li class="header__link-wrapper">
+              <a href="/#about" class="header__link">About </a>
+            </li>
+            <li class="header__link-wrapper">
+              <a href="/#projects" class="header__link">
+                Projects
+              </a>
+            </li>
+            {% comment %} <li class="header__link-wrapper">
+              <a href="#contact" class="header__link"> Contact </a>
+            </li> {% endcomment %}
+          </ul>
+          <div class="header__main-ham-menu-cont">
+            <img
+              src="{% static 'assets/svg/ham-menu.svg' %}"
+              alt="hamburger menu"
+              class="header__main-ham-menu"
+            />
+            <img
+              src="{% static 'assets/svg/ham-menu-close.svg' %}"
+              alt="hamburger menu close"
+              class="header__main-ham-menu-close d-none"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="header__sm-menu">
+        <div class="header__sm-menu-content">
+          <ul class="header__sm-menu-links">
+            <li class="header__sm-menu-link">
+              <a href="/"> Home </a>
+            </li>
+
+            <li class="header__sm-menu-link">
+              <a href="/#about"> About </a>
+            </li>
+
+            <li class="header__sm-menu-link">
+              <a href="/#projects"> Projects </a>
+            </li>
+
+            {% comment %} <li class="header__sm-menu-link">
+              <a href="#contact"> Contact </a>
+            </li> {% endcomment %}
+          </ul>
+        </div>
+      </div>
+    </header>
+    {%block content%}{%endblock%}
+       <footer class="main-footer">
+      <div class="main-container">
+        <div class="main-footer__upper">
+          <div class="main-footer__row main-footer__row-1">
+            <h2 class="heading heading-sm main-footer__heading-sm">
+              <span>Social</span>
+            </h2>
+            <div class="main-footer__social-cont">
+              <a target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/">
+                <img
+                  class="main-footer__icon"
+                  src="{% static 'assets/png/linkedin-ico.png' %}"
+                  alt="icon"
+                />
+              </a>
+              <a target="_blank" rel="noreferrer" href="https://github.com/rajputgagandeep557-cyber">
+                <img
+                  class="main-footer__icon"
+                  src="{% static 'assets/png/github-ico.png' %}"
+                  alt="icon"
+                />
+              </a>
+           
+           
+              <a target="_blank" rel="noreferrer" href="{% static 'assets/pdf/Gagandeep_Singh.pdf' %}">
+                <img
+                  class="main-footer__icon main-footer__icon--mr-none"
+                  src="{% static 'assets/svg/book-light.svg' %}"
+                  alt="icon"
+                />
+              </a>
+            </div>
+          </div>
+          <div class="main-footer__row main-footer__row-2">
+            <h4 class="heading heading-sm text-lt">Gagandeep Singh</h4>
+            <p class="main-footer__short-desc">
+              Results driven software developer with 2+ years of experience
+specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
+efficient, clean code.
+            </p>
+          </div>
+        </div>
+<div class="main-footer__lower">
+          © Copyright
+          <script>
+            document.write(new Date().getFullYear());
+          </script>
+          . Made by
+          <a rel="noreferrer" target="_blank" href="/">Gagandeep Singh</a>
+        </div>
+        
+      </div>
+    </footer>
+
+    <script src="{% static 'js/index.js' %}"></script>
+  </body>
+</html>

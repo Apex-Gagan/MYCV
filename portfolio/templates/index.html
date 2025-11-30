@@ -1,0 +1,197 @@
+{% extends 'Base.html' %}
+{%load static%}
+{%block title%}Gagandeep Singh | Software Developer {%endblock%}
+{%block desc%}Results driven software developer with 2+ years of experience
+specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
+efficient, clean code.{%endblock%}
+{%block content%}
+    <section class="home-hero">
+      <div class="home-hero__content">
+        <h1 class="heading-primary">Hey, My name is Gagandeep </h1>
+        <div class="home-hero__info">
+          <p class="text-primary">
+          Results driven software developer with 3+ years of experience
+specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
+efficient, clean code.
+          </p>
+        </div>
+        <div class="home-hero__cta">
+          <a href="#projects" class="btn btn--bg">Projects</a>
+            <a href="mailto:gdsp5911@gmail.com" class="btn btn--theme-inv">Contact </a>
+        </div>
+      </div>
+      <div class="home-hero__socials">
+        <div class="home-hero__social">
+          <a href="https://www.linkedin.com/in/gagandeep-singh-54a988291/" class="home-hero__social-icon-link" target="_blank">
+            <img
+              src="{% static 'assets/svg/linkedin-dark.svg' %}"
+              alt="icon"
+              class="home-hero__social-icon"
+            />
+          </a>
+        </div>
+        
+        <div class="home-hero__social">
+          <a href="https://github.com/rajputgagandeep557-cyber" 
+          class="home-hero__social-icon-link" target="_blank">
+            <img
+              src="{% static 'assets/svg/github-dark.svg' %}"
+              alt="icon"
+              class="home-hero__social-icon"
+            />
+          </a>
+        </div>
+        
+        <div class="home-hero__social">
+          <a
+            href="{% static 'assets/pdf/Gagandeep_Singh.pdf' %}"
+            class="home-hero__social-icon-link home-hero__social-icon-link--bd-none"
+          >
+            <img
+              src="{% static 'assets/svg/book-dark.svg' %}"
+              alt="icon"
+              class="home-hero__social-icon"
+            />
+          </a>
+        </div>
+      </div>
+      <div class="home-hero__mouse-scroll-cont">
+        <div class="mouse"></div>
+      </div>
+    </section>
+    <section id="about" class="about sec-pad">
+      <div class="main-container">
+        <h2 class="heading heading-sec heading-sec__mb-med">
+          <span class="heading-sec__main">About Me</span>
+          <span class="heading-sec__sub">
+      Here you will find more information about me, what I do, and my current skills mostly in terms of programming and technology
+          </span>
+        </h2>
+        <div class="about__content">
+          <div class="about__content-main">
+            <h3 class="about__content-title">Get to know me!</h3>
+            <div class="about__content-details">
+              <p class="about__content-details-para">
+              I’m an experienced software developer with hands-on expertise in <strong>Python, JavaScript, React, Next.js, SQL, HTML/CSS, and AJAX</strong>. Over the years, I’ve built a reputation for crafting reliable, user-focused digital solutions that not only work seamlessly but also make an impact.<br/>
+
+What drives me is more than just writing clean code—it’s the excitement of turning ideas into reality, solving challenging problems, and delivering results that help businesses and people grow. I enjoy working in collaborative teams, learning from others, and staying ahead of the curve with emerging technologies.<br/>
+
+Whether it’s optimizing a database, designing an intuitive frontend, or brainstorming innovative solutions, I thrive on bringing creativity and precision together.
+              </p>
+             
+            </div>
+            <a href="mailto:gdsp5911@gmail.com"  class="btn btn--med btn--theme dynamicBgClr"
+              >Contact</a
+            >
+          </div>
+          <div class="about__content-skills">
+            <h3 class="about__content-title">My Skills</h3>
+            <div class="skills">
+              <div class="skills__skill">Python</div>
+              <div class="skills__skill">Django</div>
+              <div class="skills__skill">JavaScript</div>
+              <div class="skills__skill">React</div>
+              <div class="skills__skill">Next.js</div>
+              <div class="skills__skill">HTML</div>
+              <div class="skills__skill">CSS</div>
+              <div class="skills__skill">Tailwind</div>
+              <div class="skills__skill">SQL</div>
+              <div class="skills__skill">Data Analysis</div>
+               <div class="skills__skill">REST API</div>
+                <div class="skills__skill">Git & GitHub</div>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="projects" class="projects sec-pad">
+      <div class="main-container">
+        <h2 class="heading heading-sec heading-sec__mb-bg">
+          <span class="heading-sec__main">Projects</span>
+          <span class="heading-sec__sub">
+          Here you will find some of the  projects that I created with each project containing its own case study
+          </span>
+        </h2>
+        {% for project in projects %}
+        <div class="projects__content ">
+          <div class="projects__row">
+            <div class="projects__row-img-cont">
+              <img
+                src="{% static project.image %}"
+                alt="Software Screenshot"
+                class="projects__row-img"
+                loading="lazy"
+              />
+            </div>
+            <div class="projects__row-content">
+              <h3 class="projects__row-content-title">{{project.Home_Title}}</h3>
+              <p class="projects__row-content-desc">
+                {{project.overview}}
+              </p>
+              <a
+                href="{% url 'project' project.slug %}"
+                class="btn btn--med btn--theme dynamicBgClr"
+                target="_blank"
+                >Case Study</a
+              >
+            </div>
+          </div>
+        
+        </div>
+        {%endfor%}
+      </div>
+    </section>
+    {% comment %} <section id="contact" class="contact sec-pad dynamicBg">
+      <div class="main-container">
+        <h2 class="heading heading-sec heading-sec__mb-med">
+          <span class="heading-sec__main heading-sec__main--lt">Contact</span>
+          <span class="heading-sec__sub heading-sec__sub--lt">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic facilis
+            tempora explicabo quae quod deserunt eius sapiente
+          </span>
+        </h2>
+        <div class="contact__form-container">
+          <form action="#" class="contact__form">
+            <div class="contact__form-field">
+              <label class="contact__form-label" for="name">Name</label>
+              <input
+                required
+                placeholder="Enter Your Name"
+                type="text"
+                class="contact__form-input"
+                name="name"
+                id="name"
+              />
+            </div>
+            <div class="contact__form-field">
+              <label class="contact__form-label" for="email">Email</label>
+              <input
+                required
+                placeholder="Enter Your Email"
+                type="text"
+                class="contact__form-input"
+                name="email"
+                id="email"
+              />
+            </div>
+            <div class="contact__form-field">
+              <label class="contact__form-label" for="message">Message</label>
+              <textarea
+                required
+                cols="30"
+                rows="10"
+                class="contact__form-input"
+                placeholder="Enter Your Message"
+                name="message"
+                id="message"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn--theme contact__btn">
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </section> {% endcomment %}
+ {%endblock%}
