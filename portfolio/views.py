@@ -45,8 +45,8 @@ class Home(View):
         if message == "":
             return HttpResponse(content="message", status=400)
         else:
-            contact = Contact.objects.create(name=name, email=email, message=message)
-            contact.save()
+            # contact = Contact.objects.create(name=name, email=email, message=message)
+            # contact.save()
             send_email(subject_field="Lead", name=name, message_body=message, sender_email=email)
 
             return HttpResponse(content="success", status=200)
