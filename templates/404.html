@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 — Page Not Found</title>
+    <link rel="icon" href="{% static 'assets/jpeg/gagan_professional_picture.png' %}"/>
+    <link rel="stylesheet" href="{% static 'css/error.css' %}" />
+  </head>
+  <body>
+    <div class="err-bg"></div>
+    <main class="err-wrap">
+      <div class="err-card">
+        <div class="err-glow"></div>
+        <div class="err-code">
+          <span>4</span>
+          <div class="err-orb">
+            <div class="err-orb-inner"></div>
+          </div>
+          <span>4</span>
+        </div>
+        <h1 class="err-title">Page Not Found</h1>
+        <p class="err-sub">
+          The page you’re looking for has wandered off into the void.
+          Let’s get you back on track.
+        </p>
+        <div class="err-cta">
+          <a href="/" class="err-btn err-btn--primary">Return Home</a>
+          <a href="/#contact" class="err-btn err-btn--ghost">Contact Me</a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,18 +1,27 @@
 {% extends 'Base.html' %}
 {%load static%}
 {%block title%}{{project.title}}{%endblock%}
-{%block desc%}{{project.overview}}{%endblock%}
+{%block desc%}{{project.short_description}}{%endblock%}
+{%block meta%}
+<meta name="description" content="{{project.short_description}}" />
+<meta property="og:title" content="{{project.title}}">
+<meta property="og:site_name" content="Gagandeep Singh Portfolio">
+<meta property="og:url" content="https://www.gagandeepsingh.in/project/{{project.slug}}">
+<meta property="og:description" content="{{project.short_description}}">
+<meta property="og:type" content="">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static project.image %}">
+{%endblock%}
 {%block content%}
     <section class="project-cs-hero">
       <div class="project-cs-hero__content">
-        <h1 class="heading-primary">{{project.Home_Title}}</h1>
+        <h1 class="heading-primary">{{project.title}}</h1>
         <div class="project-cs-hero__info">
           <p class="text-primary">
-          {{project.overview}}
+          {{project.short_description}}
           </p>
         </div>
         <div class="project-cs-hero__cta">
-          <a href="{{project.link}}" class="btn btn--bg" target="_blank">Live Link</a>
+          <a href="{{project.live_link}}" class="btn btn--bg" target="_blank">Live Link</a>
         </div>
       </div>
     </section>
@@ -30,8 +39,8 @@
             <div class="project-details__desc">
               <h3 class="project-details__content-title">Project Overview</h3>
               <p class="project-details__desc-para">
-                {{project.short_desc | safe}}
-              
+                {{project.long_description | safe}}
+
               </p>
             </div>
             <div class="project-details__tools-used">
@@ -43,9 +52,9 @@
               </div>
             </div>
             <div class="project-details__links">
-              <h3 class="project-details__content-title">See Live</h3>
+              <h3 class="project-details__content-title">See Live</h3><br/>
               <a
-                href="{{project.link}}"
+                href="{{project.live_link}}"
                 class="btn btn--med btn--theme project-details__links-btn"
                 target="_blank"
                 >Live Link</a

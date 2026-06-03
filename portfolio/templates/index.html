@@ -1,9 +1,7 @@
 {% extends 'Base.html' %}
 {%load static%}
 {%block title%}Gagandeep Singh | Software Developer {%endblock%}
-{%block desc%}Results driven software developer with 2+ years of experience
-specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
-efficient, clean code.{%endblock%}
+
 {%block content%}
     <section class="home-hero">
       <div class="home-hero__content">
@@ -17,7 +15,7 @@ efficient, clean code.
         </div>
         <div class="home-hero__cta">
           <a href="#projects" class="btn btn--bg">Projects</a>
-            <a href="mailto:gdsp5911@gmail.com" class="btn btn--theme-inv">Contact </a>
+            <a href="#contact" class="btn btn--theme-inv">Hire me </a>
         </div>
       </div>
       <div class="home-hero__socials">
@@ -30,9 +28,9 @@ efficient, clean code.
             />
           </a>
         </div>
-        
+
         <div class="home-hero__social">
-          <a href="https://github.com/rajputgagandeep557-cyber" 
+          <a href="https://github.com/rajputgagandeep557-cyber"
           class="home-hero__social-icon-link" target="_blank">
             <img
               src="{% static 'assets/svg/github-dark.svg' %}"
@@ -41,11 +39,12 @@ efficient, clean code.
             />
           </a>
         </div>
-        
+
         <div class="home-hero__social">
           <a
-            href="{% static 'assets/pdf/Gagandeep_Singh.pdf' %}"
+            href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"
             class="home-hero__social-icon-link home-hero__social-icon-link--bd-none"
+            target="_blank"
           >
             <img
               src="{% static 'assets/svg/book-dark.svg' %}"
@@ -59,12 +58,13 @@ efficient, clean code.
         <div class="mouse"></div>
       </div>
     </section>
+
     <section id="about" class="about sec-pad">
       <div class="main-container">
         <h2 class="heading heading-sec heading-sec__mb-med">
           <span class="heading-sec__main">About Me</span>
           <span class="heading-sec__sub">
-      Here you will find more information about me, what I do, and my current skills mostly in terms of programming and technology
+            Here you will find more information about me, what I do, and my current skills mostly in terms of programming and technology
           </span>
         </h2>
         <div class="about__content">
@@ -72,18 +72,20 @@ efficient, clean code.
             <h3 class="about__content-title">Get to know me!</h3>
             <div class="about__content-details">
               <p class="about__content-details-para">
-              I’m an experienced software developer with hands-on expertise in <strong>Python, JavaScript, React, Next.js, SQL, HTML/CSS, and AJAX</strong>. Over the years, I’ve built a reputation for crafting reliable, user-focused digital solutions that not only work seamlessly but also make an impact.<br/>
-
-What drives me is more than just writing clean code—it’s the excitement of turning ideas into reality, solving challenging problems, and delivering results that help businesses and people grow. I enjoy working in collaborative teams, learning from others, and staying ahead of the curve with emerging technologies.<br/>
-
-Whether it’s optimizing a database, designing an intuitive frontend, or brainstorming innovative solutions, I thrive on bringing creativity and precision together.
+                I’m an experienced software developer with hands-on expertise in <strong>Python, Django, JavaScript, React, Next.js, SQL, HTML/CSS, and AJAX</strong>. Over the years, I’ve built a reputation for crafting reliable, user-focused digital solutions that not only work seamlessly but also make an impact.<br/><br/>
+                What drives me is more than just writing clean code—it’s the excitement of turning ideas into reality, solving challenging problems, and delivering results that help businesses and people grow. I enjoy working in collaborative teams, learning from others, and staying ahead of the curve with emerging technologies.<br/><br/>
+                Whether it’s optimizing a database, designing an intuitive frontend, or brainstorming innovative solutions, I thrive on bringing creativity and precision together.
               </p>
-             
+              <div class="exp my-2">
+                <span class="icon"></span>
+                <div class="exp-content">
+                  <p class="designation"><strong>Available for freelancing projects</strong></p>
+                </div>
+              </div>
             </div>
-            <a href="mailto:gdsp5911@gmail.com"  class="btn btn--med btn--theme dynamicBgClr"
-              >Contact</a
-            >
+            <a target="_blank" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing" class="btn btn--med btn--theme dynamicBgClr">View CV</a>
           </div>
+
           <div class="about__content-skills">
             <h3 class="about__content-title">My Skills</h3>
             <div class="skills">
@@ -92,63 +94,95 @@ Whether it’s optimizing a database, designing an intuitive frontend, or brains
               <div class="skills__skill">JavaScript</div>
               <div class="skills__skill">React</div>
               <div class="skills__skill">Next.js</div>
-              <div class="skills__skill">HTML</div>
-              <div class="skills__skill">CSS</div>
+              <div class="skills__skill">HTML, CSS</div>
+              <div class="skills__skill">Docker & AWS</div>
               <div class="skills__skill">Tailwind</div>
               <div class="skills__skill">SQL</div>
               <div class="skills__skill">Data Analysis</div>
-               <div class="skills__skill">REST API</div>
-                <div class="skills__skill">Git & GitHub</div>
-            
+              <div class="skills__skill">REST API</div>
+              <div class="skills__skill">Version Control</div>
+              <div class="skills__skill">Salesforce Administration</div>
+              <div class="skills__skill">Applied AI Development</div>
+            </div>
+
+            <h3 class="about__content-title mt-5">Work Experience</h3>
+            <div class="exp-list">
+              {% for exp in experiences %}
+              <div class="exp my-2">
+                <span class="icon"></span>
+                <div class="exp-content">
+                  <p class="designation"><strong>{{ exp.designation }}</strong></p>
+                  <p class="company">{{ exp.company }}</p>
+                  <small class="duration">({{ exp.start_date }} - {{ exp.end_date|default_if_none:"Present"|default:"Present" }})</small>
+                </div>
+              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
       </div>
     </section>
+
     <section id="projects" class="projects sec-pad">
       <div class="main-container">
         <h2 class="heading heading-sec heading-sec__mb-bg">
           <span class="heading-sec__main">Projects</span>
           <span class="heading-sec__sub">
-          Here you will find some of the  projects that I created with each project containing its own case study
+            Here you will find some of the projects that I created with each project containing its own case study
           </span>
         </h2>
-        {% for project in projects %}
-        <div class="projects__content ">
-          <div class="projects__row">
-            <div class="projects__row-img-cont">
-              <img
-                src="{% static project.image %}"
-                alt="Software Screenshot"
-                class="projects__row-img"
-                loading="lazy"
-              />
-            </div>
-            <div class="projects__row-content">
-              <h3 class="projects__row-content-title">{{project.Home_Title}}</h3>
-              <p class="projects__row-content-desc">
-                {{project.overview}}
-              </p>
-              <a
-                href="{% url 'project' project.slug %}"
-                class="btn btn--med btn--theme dynamicBgClr"
-                target="_blank"
-                >Case Study</a
-              >
+
+        <div class="projects__content">
+          <div class="projects__slider" id="projectsSlider">
+            <div class="projects__track" id="projectsTrack">
+              {% for project in projects %}
+              <div class="projects__row">
+                <div class="projects__row-img-cont">
+                  <img
+                    src="{% static project.image %}"
+                    alt="Software Screenshot"
+                    class="projects__row-img"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="projects__row-content">
+                  <h3 class="projects__row-content-title">{{ project.title }}</h3>
+                  <p class="projects__row-content-desc">
+                    {% if project.overview %}{{ project.overview }}{% else %}{{ project.short_description|safe }}{% endif %}
+                  </p>
+                  <a
+                    href="{% url 'project' project.slug %}"
+                    class="btn btn--med btn--theme dynamicBgClr"
+                    target="_blank"
+                    >Case Study</a
+                  >
+                </div>
+              </div>
+              {% endfor %}
             </div>
           </div>
-        
+
+          <div class="projects__nav" id="projectsNav">
+            <button type="button" class="projects__nav-btn" id="projectsPrev" aria-label="Previous project">
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="projects__dots" id="projectsDots"></div>
+            <span class="projects__counter" id="projectsCounter">1 / 1</span>
+            <button type="button" class="projects__nav-btn" id="projectsNext" aria-label="Next project">
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
         </div>
-        {%endfor%}
+
       </div>
     </section>
-    {% comment %} <section id="contact" class="contact sec-pad dynamicBg">
+
+     <section id="contact" class="contact sec-pad dynamicBg">
       <div class="main-container">
         <h2 class="heading heading-sec heading-sec__mb-med">
           <span class="heading-sec__main heading-sec__main--lt">Contact</span>
           <span class="heading-sec__sub heading-sec__sub--lt">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic facilis
-            tempora explicabo quae quod deserunt eius sapiente
+     Feel free to Contact me by submitting the form below and I will get back to you as soon as possible
           </span>
         </h2>
         <div class="contact__form-container">
@@ -163,6 +197,7 @@ Whether it’s optimizing a database, designing an intuitive frontend, or brains
                 name="name"
                 id="name"
               />
+               <p id="name-error" class="d-none "></p>
             </div>
             <div class="contact__form-field">
               <label class="contact__form-label" for="email">Email</label>
@@ -174,6 +209,7 @@ Whether it’s optimizing a database, designing an intuitive frontend, or brains
                 name="email"
                 id="email"
               />
+              <p id="email-error" class="d-none "></p>
             </div>
             <div class="contact__form-field">
               <label class="contact__form-label" for="message">Message</label>
@@ -186,12 +222,82 @@ Whether it’s optimizing a database, designing an intuitive frontend, or brains
                 name="message"
                 id="message"
               ></textarea>
+               <p id="message-error" class="d-none "></p>
             </div>
-            <button type="submit" class="btn btn--theme contact__btn">
+            <button type="button" class="btn btn--theme contact__btn" id="cbtn" onclick="submitForm()">
               Submit
             </button>
           </form>
         </div>
       </div>
-    </section> {% endcomment %}
+    </section>
+    <div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" height="50" fill="green"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576zM438 209.7C427.3 201.9 412.3 204.3 404.5 215L285.1 379.2L233 327.1C223.6 317.7 208.4 317.7 199.1 327.1C189.8 336.5 189.7 351.7 199.1 361L271.1 433C276.1 438 282.9 440.5 289.9 440C296.9 439.5 303.3 435.9 307.4 430.2L443.3 243.2C451.1 232.5 448.7 217.5 438 209.7z"/></svg>
+    <p>Your Response has been submitted.<br/>I will be get back to you ASAP.</p>
+     <a
+                href="/"
+                class="mt-5   btn-success"
+                target="_self"
+                >Got it</a
+              >
+  </div>
+
+</div>
+ {%endblock%}
+ {%block script%}
+ <script>
+  function submitForm(){
+
+    $("#cbtn").text("Please Wait......")
+            $("#cbtn").prop("disabled", true)
+               $("#name-error").addClass("d-none");
+        $("#email-error").addClass("d-none");
+        $("#message-error").addClass("d-none");
+ $.ajax({
+      url: "{% url 'home' %}",               // as requested
+      method: 'POST',
+      data:{
+        "name":$("#name").val(),
+        "email":$("#email").val(),
+        "message":$("#message").val(),
+        "csrfmiddlewaretoken":'{{csrf_token}}'
+      },
+
+      success: function(res){
+        $("#name").val("");
+        $("#email").val("");
+        $("#message").val("");
+        var modal = document.getElementById("myModal");
+          modal.style.display = "block";
+          document.body.classList.add('modal-open');
+                $("#cbtn").text("Submit")
+            $("#cbtn").prop("disabled",false)
+
+
+      },
+      error: function(res){
+        let el = res.responseText;
+        $(`#${el}-error`).removeClass("d-none");
+        $(`#${el}-error`).text(`Please enter a valid value for ${el} field.`)
+        document.getElementById(`${el}`).scrollIntoView({
+  behavior: 'smooth',
+  block: 'start'
+});
+
+         $("#cbtn").text("Submit")
+            $("#cbtn").prop("disabled",false)
+
+      }
+    });
+
+
+  }
+
+
+ </script>
+
  {%endblock%}

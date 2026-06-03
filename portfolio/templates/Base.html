@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>{% block title %} {%endblock%}</title>
-    <meta name="description" content="{% block desc %}{%endblock%}" />
-
+    <link rel="canonical" href="http://www.gagandeepsingh.in/"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="icon" href="{%static 'assets/jpeg/gagan_professional_picture.png' %}"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,8 +16,35 @@
       href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MB8BZBDW');</script>
+<!-- End Google Tag Manager -->
+        {%block meta%}
+    <meta name="description" content="Results driven software developer with 3+ years of experience
+specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
+efficient, clean code." />
+
+<meta property="og:title" content="Gagandeep Singh | Software Developer">
+<meta property="og:site_name" content="Gagandeep Singh Portfolio">
+<meta property="og:url" content="https://www.gagandeepsingh.in/">
+<meta property="og:description" content="Results driven software developer with 3+ years of experience
+specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
+efficient, clean code.">
+<meta property="og:type" content="">
+<meta property="og:image" content="https://i.postimg.cc/gkxrBqxk/gagan-professional-picture.png">
+{%endblock%}
+
   </head>
   <body>
+      <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MB8BZBDW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
     <header class="header">
       <div class="header__content">
         <div class="header__logo-container" >
@@ -26,7 +53,7 @@
               src="{% static 'assets/jpeg/gagan_professional_picture.png' %}"
               alt="Gagandeep Logo Image"
               class="header__logo-img"
-            
+
             />
           </div>
           <span class="header__logo-sub" >Gagandeep Singh</span>
@@ -44,9 +71,12 @@
                 Projects
               </a>
             </li>
-            {% comment %} <li class="header__link-wrapper">
-              <a href="#contact" class="header__link"> Contact </a>
-            </li> {% endcomment %}
+             <li class="header__link-wrapper">
+              <a class="header__link" target="_blank" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"> View CV </a>
+            </li>
+            <li class="header__link-wrapper">
+              <a href="/#contact" class="header__link"> Contact </a>
+            </li>
           </ul>
           <div class="header__main-ham-menu-cont">
             <img
@@ -62,28 +92,34 @@
           </div>
         </div>
       </div>
-      <div class="header__sm-menu">
-        <div class="header__sm-menu-content">
-          <ul class="header__sm-menu-links">
-            <li class="header__sm-menu-link">
-              <a href="/"> Home </a>
-            </li>
-
-            <li class="header__sm-menu-link">
-              <a href="/#about"> About </a>
-            </li>
-
-            <li class="header__sm-menu-link">
-              <a href="/#projects"> Projects </a>
-            </li>
-
-            {% comment %} <li class="header__sm-menu-link">
-              <a href="#contact"> Contact </a>
-            </li> {% endcomment %}
-          </ul>
-        </div>
-      </div>
     </header>
+    <!-- Moved OUTSIDE <header> so the header's backdrop-filter does not create
+         a containing block that turns position:fixed into position:absolute
+         and clips the slide-in menu when overflow:hidden is applied to body/html. -->
+    <div class="header__sm-menu">
+      <div class="header__sm-menu-content">
+        <ul class="header__sm-menu-links">
+          <li class="header__sm-menu-link">
+            <a href="/"> Home </a>
+          </li>
+
+          <li class="header__sm-menu-link">
+            <a href="/#about"> About </a>
+          </li>
+
+          <li class="header__sm-menu-link">
+            <a href="/#projects"> Projects </a>
+          </li>
+          <li class="header__sm-menu-link">
+            <a href="/#contact"> Contact </a>
+          </li>
+
+           <li class="header__sm-menu-link">
+            <a target="_blank" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"> View CV </a>
+          </li>
+        </ul>
+      </div>
+    </div>
     {%block content%}{%endblock%}
        <footer class="main-footer">
       <div class="main-container">
@@ -100,16 +136,16 @@
                   alt="icon"
                 />
               </a>
-              <a target="_blank" rel="noreferrer" href="https://github.com/rajputgagandeep557-cyber">
+              <a target="_blank" rel="noreferrer" href="https://github.com/Apex-Gagan">
                 <img
                   class="main-footer__icon"
                   src="{% static 'assets/png/github-ico.png' %}"
                   alt="icon"
                 />
               </a>
-           
-           
-              <a target="_blank" rel="noreferrer" href="{% static 'assets/pdf/Gagandeep_Singh.pdf' %}">
+
+
+              <a target="_blank" rel="noreferrer" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">
                 <img
                   class="main-footer__icon main-footer__icon--mr-none"
                   src="{% static 'assets/svg/book-light.svg' %}"
@@ -121,9 +157,7 @@
           <div class="main-footer__row main-footer__row-2">
             <h4 class="heading heading-sm text-lt">Gagandeep Singh</h4>
             <p class="main-footer__short-desc">
-              Results driven software developer with 2+ years of experience
-specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
-efficient, clean code.
+         Backend-focused Software Developer with 3+ years of experience designing RESTful APIs, database-driven systems, and scalable server-side applications using Python, Django, SQL, and Docker. Experienced in integrating frontend frameworks where required, with primary strength in backend architecture and data handling
             </p>
           </div>
         </div>
@@ -135,10 +169,12 @@ efficient, clean code.
           . Made by
           <a rel="noreferrer" target="_blank" href="/">Gagandeep Singh</a>
         </div>
-        
+
       </div>
     </footer>
 
     <script src="{% static 'js/index.js' %}"></script>
+    {%block script%}
+    {%endblock%}
   </body>
 </html>
