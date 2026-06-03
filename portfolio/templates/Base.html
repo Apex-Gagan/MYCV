@@ -176,5 +176,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="{% static 'js/index.js' %}"></script>
     {%block script%}
     {%endblock%}
+    
+    <!-- Vercel Speed Insights -->
+    <script type="module">
+      import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@latest/dist/index.mjs';
+      injectSpeedInsights();
+    </script>
   </body>
 </html>
