@@ -182,5 +182,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@latest/dist/index.mjs';
       injectSpeedInsights();
     </script>
+    
+    <!-- Vercel Web Analytics -->
+    <script type="module">
+      import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@latest/dist/index.mjs';
+      inject();
+    </script>
   </body>
 </html>
