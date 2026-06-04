@@ -72,20 +72,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "gagan_Cv.wsgi.application"
-
 DATABASE_URL = (
     os.getenv("NEON_DB_DATABASE_URL")
     or os.getenv("DATABASE_URL")
 )
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 if DATABASE_URL:
-    # Production: hosted PostgreSQL database on Vercel
+    # Production: Neon PostgreSQL database
     DATABASES = {
-        "default": dj_database_url.config(
-            conn_max_age=600,
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=0,
             conn_health_checks=True,
         )
     }
