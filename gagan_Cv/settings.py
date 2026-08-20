@@ -10,12 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import dj_database_url
+from dotenv import load_dotenv
 
 # # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -44,6 +48,9 @@ INSTALLED_APPS = [
 SITE_ID = 1
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Must sit directly below SecurityMiddleware so static files are served
+    # (and cached) without running the rest of the stack.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -75,12 +82,22 @@ WSGI_APPLICATION = "gagan_Cv.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if os.getenv("DATABASE_URL"):
+    # Production: hosted PostgreSQL database on Vercel
+    DATABASES = {
+        "default": dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -118,7 +135,35 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# `collectstatic` target. WhiteNoise serves everything from here in production.
 STATIC_ROOT = BASE_DIR / "static"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        # Content-hashes every file (style.a1b2c3d4.css) and writes .gz/.br
+        # siblings. The hash is what makes long-lived caching safe: a changed
+        # file gets a new URL, so browsers can never serve a stale asset.
+        # Falls back to plain storage in DEBUG, where no manifest exists.
+        "BACKEND": (
+            "portfolio.storage.ResilientStaticFilesStorage"
+            if not DEBUG
+            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        ),
+    },
+}
+
+# Deliberately NOT raising WHITENOISE_MAX_AGE: this value applies to *un-hashed*
+# files, which can change under a fixed URL. WhiteNoise already serves hashed
+# files with `max-age=315360000, immutable` on its own, so the default 60s here
+# only covers the files that genuinely need to stay refreshable.
+
+# Serve the source tree directly in DEBUG so edits appear without collectstatic.
+WHITENOISE_USE_FINDERS = DEBUG
+WHITENOISE_AUTOREFRESH = DEBUG
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -129,5 +174,11 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "gspr5911@gmail.com"
-EMAIL_HOST_PASSWORD = "jgkj tgna hbih ssry"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+# Every contact-form submission is emailed here (nothing is stored in the DB).
+CONTACT_RECEIVER_EMAIL = os.getenv(
+    "CONTACT_RECEIVER_EMAIL", "softwaredeveloper@gagandeepsingh.in"
+)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

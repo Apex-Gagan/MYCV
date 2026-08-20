@@ -1,13 +1,13 @@
 /* ==========================================================================
    404 page — beautified to match the portfolio aesthetic
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #0b1020;
-  --text: #e7ecf6;
-  --text-dim: #a9b2c8;
-  --text-mute: #7a8398;
+  --bg: #070a12;
+  --text: #f3f6fd;
+  --text-dim: #ccd5e8;
+  --text-mute: #a5b0c9;
   --accent: #7c5cff;
   --accent-2: #22d3ee;
   --accent-grad: linear-gradient(135deg, #7c5cff 0%, #22d3ee 100%);
@@ -17,7 +17,7 @@
   --ease: cubic-bezier(.2, .8, .2, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Source Sans Pro', system-ui, sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif; }
 
 html { font-size: 62.5%; scroll-behavior: smooth; }
 @media (max-width: 56.25em) { html { font-size: 56%; } }
@@ -35,7 +35,7 @@ body {
   background-image:
     radial-gradient(900px 500px at 20% 10%, rgba(124, 92, 255, .25), transparent 60%),
     radial-gradient(800px 500px at 90% 100%, rgba(34, 211, 238, .18), transparent 60%),
-    linear-gradient(180deg, #0b1020 0%, #0a0f1f 100%);
+    linear-gradient(180deg, #070a12 0%, #060910 100%);
   background-attachment: fixed;
 }
 
@@ -98,7 +98,7 @@ body {
   justify-content: center;
   gap: 1.6rem;
   font-size: clamp(8rem, 18vw, 14rem);
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1;
   letter-spacing: -0.05em;
   margin-bottom: 2rem;
@@ -134,7 +134,7 @@ body {
   position: absolute;
   inset: 30%;
   border-radius: 50%;
-  background: radial-gradient(circle, #0b1020, transparent 70%);
+  background: radial-gradient(circle, #070a12, transparent 70%);
 }
 @keyframes orbFloat {
   0%, 100% { transform: translateY(0); }
@@ -143,7 +143,7 @@ body {
 
 .err-title {
   font-size: clamp(2.4rem, 4vw, 3.4rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text);
   margin-bottom: 1.2rem;
@@ -151,9 +151,10 @@ body {
 }
 
 .err-sub {
-  font-size: 1.6rem;
+  font-size: 1.7rem;
+  font-weight: 300;
   color: var(--text-dim);
-  line-height: 1.7;
+  line-height: 1.8;
   max-width: 44rem;
   margin: 0 auto 3rem;
   position: relative;
@@ -173,9 +174,8 @@ body {
   justify-content: center;
   padding: 1.4rem 2.8rem;
   font-size: 1.4rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: .04em;
-  text-transform: uppercase;
   text-decoration: none;
   color: var(--text);
   border-radius: 999px;

@@ -1,0 +1,14 @@
+New {{ subject_field }} from your portfolio contact form
+========================================================
+
+Name:     {{ name }}
+Email:    {{ sender_email }}
+Received: {{ received_at }}
+
+Message
+-------
+{{ message_body }}
+
+--
+Reply directly to this email to respond to {{ first_name }} ({{ sender_email }}).
+Sent automatically by the contact form on https://www.gagandeepsingh.in/
