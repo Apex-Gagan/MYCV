@@ -1,0 +1,237 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Zzyrzekw9mAQ6dfiUh8SZh$GwF5N0PEJmEzhl0QMCyLX0myrFB3GitI1Fe8jkG/pjM=",
+    "last_login": "2025-12-10T13:04:02.260Z",
+    "is_superuser": true,
+    "username": "owner@gagan",
+    "first_name": "",
+    "last_name": "",
+    "email": "gspathania786@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-12-10T13:03:44.013Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$tBLDA02V2pPb9Rs82sYJtL$lUa5NkZqfaWsj1aKystslT0viomCcw2GgDMUZAf6s64=",
+    "last_login": "2026-02-05T14:00:19.196Z",
+    "is_superuser": true,
+    "username": "gagan_admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "gspathania786@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-05T13:25:47.528Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$TLaqT4xTIfxjNW0r6G0Bz6$gxEzgtsEn6PiQ8nVQ7uvVYAPwVKlyb9AnXrwIFfAx2o=",
+    "last_login": "2026-05-16T05:36:49.246Z",
+    "is_superuser": true,
+    "username": "mr_gdsp",
+    "first_name": "",
+    "last_name": "",
+    "email": "gdsp786@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-12T17:13:40.595Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sites.site",
+  "pk": 1,
+  "fields": {
+    "domain": "www.gagandeepsingh.in",
+    "name": "www.gagandeepsingh.in"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 1,
+  "fields": {
+    "title": "Pyramid B2B Portal",
+    "short_description": "Pyramid eServices is a visa consulting company and I created their full stack B2B Portal using tools I know.",
+    "long_description": "Pyramid eServices is a visa consulting company and this B2B Portal is a software for their partners to punch in student visa applications, communicate with academic counselors, pay college fees, get monthly performance reports and much more.\r\nI used my frontend tools to build the user interface and backend functionality using Python Django which is integrated with Salesforce CRM.",
+    "image": "/assets/jpeg/4.png",
+    "live_link": "https://pyramideservices.co.in/partners/",
+    "tools_used": "Python,\r\nDjango,\r\nSQL,\r\nSalesforce Integration,\r\nHTML,\r\nBootstrap,\r\nREST API",
+    "slug": "pyramid-b2b-portal"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 2,
+  "fields": {
+    "title": "Gems Consultants",
+    "short_description": "Gems Consultants is a digital marketing agency based in UAE and I created their multi-page website using my skills to build their online presence.",
+    "long_description": "Gems Consultants is a digital marketing agency based in UAE and I created their multi-page website using my skills to build their online presence and make them stand out among their competitors and provide a better user experience for all types of devices.\r\nI took design idea from various Envato themes and for backend functionality, I utilized Python and Flask framework.",
+    "image": "/assets/jpeg/1.png",
+    "live_link": "https://www.thegemsconsultants.com/",
+    "tools_used": "Python,\r\nFlask,\r\nAJAX,\r\nBootstrap,\r\nHTML",
+    "slug": "gems-consultants"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 3,
+  "fields": {
+    "title": "LPU Online Education Website",
+    "short_description": "Lovely Professional University is one of the best universities in India and I along with two other team members developed their Online education website.",
+    "long_description": "LPU is one of the best universities in India and I along with two other team members developed their Online education website.\r\nI used tools like Next.js and React for the user interface and backend functionality. For database handling, I used PostgreSQL.",
+    "image": "/assets/jpeg/3.png",
+    "live_link": "https://www.lpuonline.com/",
+    "tools_used": "React,\r\nNext.js,\r\nPostgreSQL,\r\nSupabase,\r\nREST API",
+    "slug": "lpu-online-website"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 4,
+  "fields": {
+    "title": "Brightminds Consultants Website",
+    "short_description": "Brightminds is a campus setup consultancy firm based in UAE and I developed their website using tools I know.",
+    "long_description": "Brightminds is a campus setup and abroad education consultancy firm based in UAE and I developed their website to create their online presence.\r\nI used a pre built theme from Bootstrap and customised it according to the client's requirements.",
+    "image": "/assets/jpeg/2.png",
+    "live_link": "https://www.thebrightminds.ae/",
+    "tools_used": "HTML,\r\nCSS,\r\nBootstrap,\r\nSQL,\r\nPython,\r\nDjango,\r\nAJAX",
+    "slug": "brightminds-website"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 5,
+  "fields": {
+    "title": "Global Education Network Group",
+    "short_description": "Global Education Network is a collaborative enterprise in the Higher education sector and I developed their website using tools I know.",
+    "long_description": "Global Education Network is a collaborative enterprise in the Higher education sector and I developed their website using tools I know.\r\nI used my frontend tools to build the user interface and backend functionality using Python Django which is integrated with Salesforce CRM.",
+    "image": "/assets/jpeg/5.png",
+    "live_link": "https://www.gengroup.io/",
+    "tools_used": "HTML,\r\nCSS,\r\nBooststrap,\r\nDjango,\r\nREST API,\r\nSalesforce Integration",
+    "slug": "global-education-network-group"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 6,
+  "fields": {
+    "title": "Rakesh Packers Website",
+    "short_description": "Rakesh packers is a packaging company based in India and I helped them build their online presence.",
+    "long_description": "This website is developed by me using Python Django and Tailwind. It also includes WhatsApp based checkout system and session based cart system.",
+    "image": "/assets/jpeg/rakesh-packer.png",
+    "live_link": "https://www.rakeshpacker.com/",
+    "tools_used": "Python,Django,Tailwind,AJAX",
+    "slug": "rakesh-packer-website"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 7,
+  "fields": {
+    "title": "Clinic Organizer Software",
+    "short_description": "Afecto PMS is a multi-branch clinic management system built for a homeopathic practice. It covers patient registration, appointment scheduling, prescription and follow-up tracking, lab reports, billing, refunds, and courier dispatch — all under role-based access for eight distinct staff roles.",
+    "long_description": "Afecto PMS is a comprehensive Practice Management System built for a multi-branch homeopathic clinic chain. The platform handles the complete patient lifecycle — from initial appointment booking through long-term treatment tracking — across multiple clinic locations under a single unified system.\r\nAt its core, the system manages patient registration, doctor assignments, branch allocation, and treatment history. Doctors can record homeopathic prescriptions with remedy, potency, frequency, and dosage details, track acute medicines separately, and maintain detailed follow-up schedules with visit records and clinical notes. The system captures vitals, lab reports across 17 categories (CBC, lipid profile, diabetes panel, serology, USG, X-ray, and more), medical examination records, and patient files uploaded to cloud storage.\r\nThe billing module handles registration fees, treatment plan invoicing, partial payments, pending tracking, and refund workflows. A courier pickup module manages medicine dispatch logistics. Branch fund management tracks allocations and expense usage per branch. HR gets staff performance reporting, and accountants get dedicated revenue, refund, and courier reports filtered by branch and date range.\r\nRole-based access controls the entire system — Admin, Doctor, Receptionist, Clinic Incharge, Telecaller, Accountant, HR, and Dispenser each see only what their role permits, with branch-scoped data for non-admin users. Communication is built in with SMS dispatch history, call logs, and bulk SMS campaigns. An audit trail logs every data modification with field-level change history.\r\nThe admin dashboard provides cross-branch appointment and patient analytics. Telecallers manage leads and conversion tracking. The system also generates printable prescriptions, health certificates, test advice slips, and patient stickers. A referral tree tracks which patients were referred by whom, supporting word-of-mouth conversion analysis.",
+    "image": "/assets/jpeg/afecto-homeo.png",
+    "live_link": "https://www.clinicmanager360.com/account/login",
+    "tools_used": "Python,Django,PostgreSQL,Supabase,HTML,CSS,JavaScript,jQuery,Tailwind CSS, DataTables,ApexCharts,REST APIs,Django ORM,Django Auth Groups,WhatsApp API,SMS API",
+    "slug": "clinic-organizer"
+  }
+},
+{
+  "model": "portfolio.project",
+  "pk": 8,
+  "fields": {
+    "title": "LPU Distance Education Website",
+    "short_description": "Lovely Professional University is one of the best universities in India and I developed their Distance Education website.",
+    "long_description": "LPU is one of the best universities in India and I developed their Distance Education Website.\r\nI used tools like Next.js and React for the user interface and backend functionality. For database handling, I used PostgreSQL.",
+    "image": "/assets/jpeg/lpu_de.png",
+    "live_link": "https://test.lpude.in",
+    "tools_used": "React,\r\nNext.js,\r\nPostgreSQL,\r\nSupabase,\r\nREST API",
+    "slug": "lpu-distance-education-website"
+  }
+},
+{
+  "model": "portfolio.contact",
+  "pk": 1,
+  "fields": {
+    "name": "Afecto Clinic Organizer",
+    "email": "drrsodhi@gmail.com",
+    "message": "need a software"
+  }
+},
+{
+  "model": "portfolio.contact",
+  "pk": 2,
+  "fields": {
+    "name": "Jalandhar",
+    "email": "jaldoctor3@gmail.com",
+    "message": "need a website"
+  }
+},
+{
+  "model": "portfolio.contact",
+  "pk": 3,
+  "fields": {
+    "name": "punjab jwellers",
+    "email": "pbjw@gmail.com",
+    "message": "need a custom website"
+  }
+},
+{
+  "model": "portfolio.contact",
+  "pk": 4,
+  "fields": {
+    "name": "Gagandeep Singh",
+    "email": "jalandhar.afectoclinic@gmail.com",
+    "message": "dfsdvsdvsdv"
+  }
+},
+{
+  "model": "portfolio.experience",
+  "pk": 1,
+  "fields": {
+    "company": "Lovely Professional University",
+    "designation": "Software Developer",
+    "start_date": "2025-06-20",
+    "end_date": null,
+    "is_pursuing": true
+  }
+},
+{
+  "model": "portfolio.experience",
+  "pk": 2,
+  "fields": {
+    "company": "Pyramid eServices",
+    "designation": "Assistant Manager ( Software Dev. Team)",
+    "start_date": "2024-09-09",
+    "end_date": "2025-06-14",
+    "is_pursuing": false
+  }
+},
+{
+  "model": "portfolio.experience",
+  "pk": 3,
+  "fields": {
+    "company": "Pyramid eServices",
+    "designation": "Software Developer",
+    "start_date": "2023-06-22",
+    "end_date": "2024-09-07",
+    "is_pursuing": false
+  }
+}
+]

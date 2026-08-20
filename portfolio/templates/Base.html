@@ -5,18 +5,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="theme-color" content="#070a12" />
     <title>{% block title %} {%endblock%}</title>
     <link rel="canonical" href="http://www.gagandeepsingh.in/"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <link rel="icon" href="{%static 'assets/jpeg/gagan_professional_picture.png' %}"/>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="icon" href="{%static 'assets/jpeg/gagan_professional_picture.png' %}"/>
+
       <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -45,18 +47,21 @@ efficient, clean code.">
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MB8BZBDW"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="cursor-glow" aria-hidden="true"></div>
+
     <header class="header">
       <div class="header__content">
-        <div class="header__logo-container" >
+        <div class="header__logo-container" role="link" tabindex="0" aria-label="Go to homepage">
           <div class="header__logo-img-cont">
             <img
               src="{% static 'assets/jpeg/gagan_professional_picture.png' %}"
-              alt="Gagandeep Logo Image"
+              alt="Gagandeep Singh"
               class="header__logo-img"
-
             />
           </div>
-          <span class="header__logo-sub" >Gagandeep Singh</span>
+          <span class="header__logo-sub">Gagandeep Singh</span>
         </div>
         <div class="header__main">
           <ul class="header__links">
@@ -64,63 +69,83 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <a href="/" class="header__link"> Home </a>
             </li>
             <li class="header__link-wrapper">
-              <a href="/#about" class="header__link">About </a>
+              <a href="/#about" class="header__link">About</a>
             </li>
             <li class="header__link-wrapper">
-              <a href="/#projects" class="header__link">
-                Projects
-              </a>
+              <a href="/#projects" class="header__link">Projects</a>
             </li>
              <li class="header__link-wrapper">
-              <a class="header__link" target="_blank" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"> View CV </a>
+              <a class="header__link" target="_blank" rel="noreferrer" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">View CV</a>
             </li>
             <li class="header__link-wrapper">
               <a href="/#contact" class="header__link"> Contact </a>
             </li>
           </ul>
-          <div class="header__main-ham-menu-cont">
-            <img
-              src="{% static 'assets/svg/ham-menu.svg' %}"
-              alt="hamburger menu"
-              class="header__main-ham-menu"
-            />
-            <img
-              src="{% static 'assets/svg/ham-menu-close.svg' %}"
-              alt="hamburger menu close"
-              class="header__main-ham-menu-close d-none"
-            />
-          </div>
+          <button
+            type="button"
+            class="header__main-ham-menu-cont"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+            aria-controls="smMenu"
+          >
+            <span class="ham-bars" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </span>
+          </button>
         </div>
       </div>
     </header>
-    <!-- Moved OUTSIDE <header> so the header's backdrop-filter does not create
-         a containing block that turns position:fixed into position:absolute
-         and clips the slide-in menu when overflow:hidden is applied to body/html. -->
-    <div class="header__sm-menu">
+
+    <!-- Kept OUTSIDE <header> so the header's backdrop-filter does not create a
+         containing block that would clip this fixed overlay. -->
+    <div class="header__sm-menu" id="smMenu" aria-hidden="true">
+      <!-- Sits directly over the hamburger's position. The header itself is
+           painted below this overlay, so its own button is not tappable here. -->
+      <button
+        type="button"
+        class="header__sm-menu-close"
+        data-menu-close
+        aria-label="Close navigation menu"
+      >
+        <span class="sm-close-x" aria-hidden="true"><span></span><span></span></span>
+        <span class="header__sm-menu-close-label">Close</span>
+      </button>
+
       <div class="header__sm-menu-content">
         <ul class="header__sm-menu-links">
           <li class="header__sm-menu-link">
-            <a href="/"> Home </a>
+            <a href="/" data-num="01">Home <i class="fa-solid fa-arrow-right"></i></a>
           </li>
 
           <li class="header__sm-menu-link">
-            <a href="/#about"> About </a>
+            <a href="/#about" data-num="02">About <i class="fa-solid fa-arrow-right"></i></a>
           </li>
 
           <li class="header__sm-menu-link">
-            <a href="/#projects"> Projects </a>
+            <a href="/#projects" data-num="03">Projects <i class="fa-solid fa-arrow-right"></i></a>
           </li>
           <li class="header__sm-menu-link">
-            <a href="/#contact"> Contact </a>
+            <a href="/#contact" data-num="04">Contact <i class="fa-solid fa-arrow-right"></i></a>
           </li>
 
            <li class="header__sm-menu-link">
-            <a target="_blank" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"> View CV </a>
+            <a target="_blank" rel="noreferrer" data-num="05" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">View CV <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
           </li>
         </ul>
+
+        <div class="header__sm-menu-footer">
+          <p>Available for<br/>freelance work</p>
+          <div class="header__sm-menu-socials">
+            <a target="_blank" rel="noreferrer" aria-label="LinkedIn" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a target="_blank" rel="noreferrer" aria-label="GitHub" href="https://github.com/Apex-Gagan"><i class="fa-brands fa-github"></i></a>
+            <a href="/#contact" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+          </div>
+        </div>
       </div>
     </div>
+
     {%block content%}{%endblock%}
+
        <footer class="main-footer">
       <div class="main-container">
         <div class="main-footer__upper">
@@ -129,27 +154,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span>Social</span>
             </h2>
             <div class="main-footer__social-cont">
-              <a target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/">
+              <a target="_blank" rel="noreferrer" aria-label="LinkedIn" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/">
                 <img
                   class="main-footer__icon"
                   src="{% static 'assets/png/linkedin-ico.png' %}"
-                  alt="icon"
+                  alt=""
                 />
               </a>
-              <a target="_blank" rel="noreferrer" href="https://github.com/Apex-Gagan">
+              <a target="_blank" rel="noreferrer" aria-label="GitHub" href="https://github.com/Apex-Gagan">
                 <img
                   class="main-footer__icon"
                   src="{% static 'assets/png/github-ico.png' %}"
-                  alt="icon"
+                  alt=""
                 />
               </a>
 
 
-              <a target="_blank" rel="noreferrer" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">
+              <a target="_blank" rel="noreferrer" aria-label="Résumé" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">
                 <img
                   class="main-footer__icon main-footer__icon--mr-none"
                   src="{% static 'assets/svg/book-light.svg' %}"
-                  alt="icon"
+                  alt=""
                 />
               </a>
             </div>
@@ -162,18 +187,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
 <div class="main-footer__lower">
-          © Copyright
-          <script>
-            document.write(new Date().getFullYear());
-          </script>
-          . Made by
-          <a rel="noreferrer" target="_blank" href="/">Gagandeep Singh</a>
+          © Copyright <span id="year">2026</span>. Made by
+          <a rel="noreferrer" href="/">Gagandeep Singh</a>
         </div>
 
       </div>
     </footer>
 
-    <script src="{% static 'js/index.js' %}"></script>
+    <button type="button" class="to-top" aria-label="Back to top">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script src="{% static 'js/index.js' %}" defer></script>
     {%block script%}
     {%endblock%}
     

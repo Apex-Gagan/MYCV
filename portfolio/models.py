@@ -9,6 +9,23 @@ class Project(models.Model):
     live_link = models.URLField()
     tools_used = models.TextField()
     slug = models.SlugField(unique=True)
+
+    @property
+    def tool_list(self):
+        """`tools_used` is a comma-separated blob; templates want a clean list."""
+        return [tool.strip() for tool in self.tools_used.split(",") if tool.strip()]
+
+    @property
+    def image_path(self):
+        """Static-relative image key.
+
+        Rows store the path with a leading slash ("/assets/jpeg/4.png"), which
+        never matches a staticfiles manifest key and breaks {% static %} once
+        hashed storage is enabled. Normalise it here rather than in each
+        template.
+        """
+        return (self.image or "").strip().lstrip("/")
+
     def __str__(self):
         return self.title
 

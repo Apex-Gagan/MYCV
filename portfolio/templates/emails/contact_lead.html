@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>New Portfolio Lead</title>
+    <!--[if mso]>
+      <style>
+        body, table, td, div, p, a { font-family: 'Segoe UI', Arial, sans-serif !important; }
+      </style>
+    <![endif]-->
+  </head>
+  <body style="margin:0; padding:0; width:100%; background-color:#0b0f1a;">
+    <!-- Preheader (hidden preview text) -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; height:0; width:0;">
+      New {{ subject_field }} from {{ name }} &mdash; {{ preview_snippet }}
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="background-color:#0b0f1a; background-image:linear-gradient(180deg,#0b0f1a 0%,#0e1424 100%); padding:32px 12px;">
+      <tr>
+        <td align="center">
+
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+                 style="width:600px; max-width:100%; background-color:#ffffff; border-radius:18px; overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,.45);">
+
+            <!-- ===== Header ===== -->
+            <tr>
+              <td style="background-color:#0d1226; background-image:linear-gradient(135deg,#141a3a 0%,#0d1226 55%,#131c3d 100%); padding:30px 34px 26px 34px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td align="left" style="font-family:'Poppins','Segoe UI',Arial,sans-serif;">
+                      <p style="margin:0 0 10px 0; font-size:11px; line-height:1; letter-spacing:2.4px; text-transform:uppercase; color:#7c5cff; font-weight:600;">
+                        gagandeepsingh.in
+                      </p>
+                      <h1 style="margin:0; font-size:23px; line-height:1.3; font-weight:700; color:#ffffff; letter-spacing:-0.2px;">
+                        New {{ subject_field }} from your portfolio
+                      </h1>
+                      <p style="margin:8px 0 0 0; font-size:13px; line-height:1.5; color:#a9b8dc;">
+                        Someone just reached out through the contact form.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- accent rule -->
+            <tr>
+              <td style="height:4px; line-height:4px; font-size:0; background-color:#7c5cff; background-image:linear-gradient(90deg,#7c5cff 0%,#22d3ee 100%);">&nbsp;</td>
+            </tr>
+
+            <!-- ===== Details ===== -->
+            <tr>
+              <td style="padding:30px 34px 6px 34px; font-family:'Poppins','Segoe UI',Arial,sans-serif;">
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color:#f7f8fc; border:1px solid #e8eaf4; border-radius:14px;">
+                  <tr>
+                    <td style="padding:18px 22px; border-bottom:1px solid #e8eaf4;">
+                      <div style="font-size:10px; font-weight:600; color:#8a92ad; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:6px;">Name</div>
+                      <div style="font-size:16px; font-weight:600; color:#151a2e; line-height:1.4;">{{ name }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:18px 22px; border-bottom:1px solid #e8eaf4;">
+                      <div style="font-size:10px; font-weight:600; color:#8a92ad; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:6px;">Email</div>
+                      <div style="font-size:16px; line-height:1.4;">
+                        <a href="mailto:{{ sender_email }}" style="color:#5b3ff0; font-weight:600; text-decoration:none;">{{ sender_email }}</a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:18px 22px;">
+                      <div style="font-size:10px; font-weight:600; color:#8a92ad; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:6px;">Received</div>
+                      <div style="font-size:15px; color:#151a2e; line-height:1.4;">{{ received_at }}</div>
+                    </td>
+                  </tr>
+                </table>
+
+              </td>
+            </tr>
+
+            <!-- ===== Message ===== -->
+            <tr>
+              <td style="padding:22px 34px 6px 34px; font-family:'Poppins','Segoe UI',Arial,sans-serif;">
+                <div style="font-size:10px; font-weight:600; color:#8a92ad; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:10px;">Message</div>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color:#f4f2ff; border-left:4px solid #7c5cff; border-radius:0 12px 12px 0;">
+                  <tr>
+                    <td style="padding:18px 20px; font-size:15px; line-height:1.7; color:#2b3049; white-space:pre-wrap; word-break:break-word;">{{ message_body }}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- ===== CTA ===== -->
+            <tr>
+              <td align="center" style="padding:28px 34px 32px 34px; font-family:'Poppins','Segoe UI',Arial,sans-serif;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center" style="border-radius:10px; background-color:#5b3ff0; background-image:linear-gradient(135deg,#7c5cff 0%,#4f46e5 100%);">
+                      <a href="mailto:{{ sender_email }}?subject=Re:%20Portfolio%20{{ subject_field|urlencode }}"
+                         style="display:inline-block; padding:14px 34px; font-size:14px; font-weight:600; color:#ffffff; text-decoration:none; letter-spacing:.3px; border-radius:10px;">
+                        Reply to {{ first_name }}
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:14px 0 0 0; font-size:12px; color:#9098b0; line-height:1.5;">
+                  Hitting reply on this email also goes straight to {{ sender_email }}.
+                </p>
+              </td>
+            </tr>
+
+            <!-- ===== Footer ===== -->
+            <tr>
+              <td style="background-color:#0d1226; padding:20px 34px; text-align:center; font-family:'Poppins','Segoe UI',Arial,sans-serif;">
+                <p style="margin:0; font-size:12px; line-height:1.6; color:#8b96b8;">
+                  Sent automatically by the contact form on
+                  <a href="https://www.gagandeepsingh.in/" style="color:#22d3ee; text-decoration:none; font-weight:600;">gagandeepsingh.in</a>
+                </p>
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
