@@ -13,8 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+
 import dj_database_url
 from dotenv import load_dotenv
+
+
+from dotenv import load_dotenv
+import dj_database_url
 
 # # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,6 +84,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "gagan_Cv.wsgi.application"
 
 
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -87,10 +93,27 @@ if os.getenv("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.config(
             conn_max_age=600,
+
+DATABASE_URL = (
+    os.getenv("NEON_DB_DATABASE_URL")
+    or os.getenv("DATABASE_URL")
+)
+
+if DATABASE_URL:
+    # Production: Neon PostgreSQL database
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=0,
+
             conn_health_checks=True,
         )
     }
 else:
+
+
+
+    # Local development: SQLite
 
     DATABASES = {
         "default": {
@@ -177,8 +200,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
+
 # Every contact-form submission is emailed here (nothing is stored in the DB).
 CONTACT_RECEIVER_EMAIL = os.getenv(
     "CONTACT_RECEIVER_EMAIL", "softwaredeveloper@gagandeepsingh.in"
 )
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

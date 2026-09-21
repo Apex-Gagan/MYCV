@@ -30,6 +30,7 @@ class Home(View):
             return JsonResponse({"error": str(e)}, status=500)
 
     def post(self, request):
+
         """Contact form: validate, email the lead, persist nothing."""
         name = (request.POST.get("name") or "").strip()
         email = (request.POST.get("email") or "").strip()
@@ -66,6 +67,23 @@ class Home(View):
         return JsonResponse(
             {"status": "error", "field": field, "message": message}, status=400
         )
+
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        if len(name) == 0:
+            return HttpResponse(content="name", status=400)
+        if email == "" or not is_valid_email_address(email):
+            return HttpResponse(content="email", status=400)
+        if message == "":
+            return HttpResponse(content="message", status=400)
+        else:
+            # contact = Contact.objects.create(name=name, email=email, message=message)
+            # contact.save()
+            send_email(subject_field="Lead", name=name, message_body=message, sender_email=email)
+
+            return HttpResponse(content="success", status=200)
+
 
 
 class project_Details(View):
