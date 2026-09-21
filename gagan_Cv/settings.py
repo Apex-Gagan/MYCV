@@ -99,7 +99,7 @@ if os.getenv("DATABASE_URL"):
     }
 
 
-        )}
+        
 
 DATABASE_URL = (
     os.getenv("NEON_DB_DATABASE_URL")
