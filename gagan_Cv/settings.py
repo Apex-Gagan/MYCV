@@ -93,7 +93,14 @@ if os.getenv("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.config(
             conn_max_age=600,
+
+            conn_health_checks=True,
+        )
+    }
+
+
         )}
+
 DATABASE_URL = (
     os.getenv("NEON_DB_DATABASE_URL")
     or os.getenv("DATABASE_URL")
