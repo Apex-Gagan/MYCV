@@ -1373,7 +1373,7 @@ body::after {
 }
 
 /* ---------------------------------------------------------------
-   13. Projects slider
+   13. Projects slider (paged card grid)
    --------------------------------------------------------------- */
 .projects { position: relative; }
 
@@ -1381,69 +1381,70 @@ body::after {
 
 .projects__slider {
   overflow: hidden;
-  border-radius: var(--radius-xl);
+  /* Breathing room so the hover lift and card shadow are not clipped. */
+  padding: 1rem 0 1.6rem;
   cursor: grab;
 }
 .projects__slider:active { cursor: grabbing; }
 
 .projects__track {
+  position: relative;
   display: flex;
-  transition: transform .78s var(--ease-out);
+  align-items: stretch;
+  /* `--per-view` is the single source of truth for how many cards fit a page:
+     the media queries below move it, the card width derives from it, and the
+     slider JS reads the computed value so paging never drifts from layout. */
+  --per-view: 3;
+  --card-gap: 2.4rem;
+  gap: var(--card-gap);
+  transition: transform .7s var(--ease-out);
   will-change: transform;
 }
 
-.projects__row {
+@media (max-width: 62.5em) {
+  .projects__track { --per-view: 2; --card-gap: 2rem; }
+}
+@media (max-width: 37.5em) {
+  .projects__track { --per-view: 1; --card-gap: 1.6rem; }
+}
+
+.projects__card {
+  --card-w: calc((100% - (var(--per-view) - 1) * var(--card-gap)) / var(--per-view));
   position: relative;
-  flex: 0 0 100%;
-  min-width: 100%;
-  display: grid;
-  grid-template-columns: 1.15fr .85fr;
-  align-items: center;
-  gap: 4.4rem;
-  padding: 4rem;
-  border-radius: var(--radius-xl);
+  flex: 0 0 var(--card-w);
+  max-width: var(--card-w);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: linear-gradient(150deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .018));
   -webkit-backdrop-filter: blur(14px);
           backdrop-filter: blur(14px);
   box-shadow: var(--shadow-md);
   overflow: hidden;
+  transition: transform .5s var(--ease), border-color .5s var(--ease), box-shadow .5s var(--ease);
+}
+.projects__card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-lg);
 }
 
-.projects__row::after {
-  content: '';
-  position: absolute;
-  top: -40%;
-  right: -20%;
-  width: 60%;
-  height: 180%;
-  pointer-events: none;
-  background: radial-gradient(closest-side, rgba(124, 92, 255, .18), transparent);
-}
-
-@media (max-width: 62.5em) {
-  .projects__row { grid-template-columns: 1fr; gap: 2.6rem; padding: 2.6rem; }
-}
-@media (max-width: 37.5em) {
-  .projects__row { padding: 1.8rem; border-radius: var(--radius-lg); }
-}
-
-.projects__row-img-cont {
+.projects__card-img-cont {
   position: relative;
-  border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-md);
+  border-bottom: 1px solid var(--border);
   background: var(--bg-3);
 }
-.projects__row-img-cont::after {
+.projects__card-img-cont::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, transparent 55%, rgba(7, 10, 18, .55));
   pointer-events: none;
 }
-.projects__row-img {
+.projects__card-img {
+  display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 10;
@@ -1451,57 +1452,81 @@ body::after {
   object-position: top center;
   transition: transform .8s var(--ease);
 }
-.projects__row:hover .projects__row-img { transform: scale(1.05); }
+.projects__card:hover .projects__card-img { transform: scale(1.06); }
 
-.projects__row-content { position: relative; z-index: 1; }
+.projects__card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 2.4rem 2.2rem 2.6rem;
+}
+@media (max-width: 37.5em) {
+  .projects__card-body { padding: 2rem 1.8rem 2.2rem; }
+}
 
-.projects__row-index {
+.projects__card-index {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 500;
   letter-spacing: 2px;
   color: var(--accent-2);
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
-.projects__row-content-title {
-  font-size: clamp(2.2rem, 3vw, 3rem);
+.projects__card-title {
+  font-size: clamp(1.9rem, 1.7vw, 2.2rem);
   font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -.6px;
+  line-height: 1.3;
+  letter-spacing: -.4px;
   color: var(--text);
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.1rem;
 }
 
-/* Project blurb — readable secondary copy */
-.projects__row-content-desc {
-  font-size: 1.65rem;
+/* Project blurb — clamped so every card in a row lines up. */
+.projects__card-desc {
+  font-size: 1.45rem;
   font-weight: 400;
-  line-height: 1.85;
+  line-height: 1.75;
   color: var(--text-2);
-  margin-bottom: 2.2rem;
+  margin-bottom: 1.8rem;
   text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.projects__row-tags {
+.projects__card-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: .7rem;
-  margin-bottom: 2.6rem;
+  gap: .6rem;
+  margin-bottom: 2rem;
 }
-.projects__row-tag {
+.projects__card-tag {
   font-family: var(--font-mono);
-  font-size: 1.28rem;
+  font-size: 1.15rem;
   font-weight: 500;
   color: var(--text-3);
-  padding: .5rem 1.1rem;
+  padding: .42rem .9rem;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, .03);
 }
 
-.projects__row-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.projects__card-actions {
+  display: flex;
+  gap: .8rem;
+  flex-wrap: wrap;
+  /* Pin the buttons to the bottom so ragged copy never staggers them. */
+  margin-top: auto;
+}
+.projects__card-actions .btn {
+  padding: 1.1rem 1.9rem;
+  font-size: 1.3rem;
+}
 
 /* nav */
 .projects__nav {
@@ -1512,6 +1537,8 @@ body::after {
   margin-top: 3.4rem;
   flex-wrap: wrap;
 }
+/* A single page means nothing to page through. */
+.projects__nav--hidden { display: none; }
 
 .projects__nav-btn {
   width: 4.8rem;

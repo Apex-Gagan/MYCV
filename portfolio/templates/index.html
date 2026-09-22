@@ -201,27 +201,27 @@
           <div class="projects__slider" id="projectsSlider">
             <div class="projects__track" id="projectsTrack">
               {% for project in projects %}
-              <div class="projects__row">
-                <div class="projects__row-img-cont">
+              <article class="projects__card">
+                <div class="projects__card-img-cont">
                   <img
-                    src="{% static project.image_path %}"
+                    src="{{ project.image_url }}"
                     alt="{{ project.title }} screenshot"
-                    class="projects__row-img"
+                    class="projects__card-img"
                     loading="lazy"
                   />
                 </div>
-                <div class="projects__row-content">
-                  <span class="projects__row-index">PROJECT {{ forloop.counter|stringformat:"02d" }}</span>
-                  <h3 class="projects__row-content-title">{{ project.title }}</h3>
-                  <p class="projects__row-content-desc">
+                <div class="projects__card-body">
+                  <span class="projects__card-index">PROJECT {{ forloop.counter|stringformat:"02d" }}</span>
+                  <h3 class="projects__card-title">{{ project.title }}</h3>
+                  <p class="projects__card-desc">
                     {{ project.short_description|safe }}
                   </p>
-                  <div class="projects__row-tags">
-                    {% for tool in project.tool_list|slice:":5" %}
-                    <span class="projects__row-tag">{{ tool }}</span>
+                  <div class="projects__card-tags">
+                    {% for tool in project.tool_list|slice:":4" %}
+                    <span class="projects__card-tag">{{ tool }}</span>
                     {% endfor %}
                   </div>
-                  <div class="projects__row-actions">
+                  <div class="projects__card-actions">
                     <a
                       href="{% url 'project' project.slug %}"
                       class="btn btn--med btn--theme dynamicBgClr"
@@ -239,18 +239,18 @@
                     {% endif %}
                   </div>
                 </div>
-              </div>
+              </article>
               {% endfor %}
             </div>
           </div>
 
           <div class="projects__nav" id="projectsNav">
-            <button type="button" class="projects__nav-btn" id="projectsPrev" aria-label="Previous project">
+            <button type="button" class="projects__nav-btn" id="projectsPrev" aria-label="Previous projects">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
             <div class="projects__dots" id="projectsDots"></div>
             <span class="projects__counter" id="projectsCounter">01 / 01</span>
-            <button type="button" class="projects__nav-btn" id="projectsNext" aria-label="Next project">
+            <button type="button" class="projects__nav-btn" id="projectsNext" aria-label="Next projects">
               <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>

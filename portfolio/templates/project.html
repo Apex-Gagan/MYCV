@@ -9,7 +9,7 @@
 <meta property="og:url" content="https://www.gagandeepsingh.in/project/{{project.slug}}">
 <meta property="og:description" content="{{project.short_description}}">
 <meta property="og:type" content="">
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static project.image_path %}">
+<meta property="og:image" content="{{ og_image }}">
 {%endblock%}
 {%block content%}
     <section class="project-cs-hero">
@@ -34,7 +34,7 @@
         <div class="project-details__content">
           <div class="project-details__showcase-img-cont" data-reveal>
             <img
-              src="{% static project.image_path %}"
+              src="{{ project.image_url }}"
               alt="{{ project.title }}"
               class="project-details__showcase-img"
             />
