@@ -188,7 +188,7 @@
      ------------------------------------------------------------------ */
   ;(function cardSheen() {
     if (prefersReduced) return
-    const cards = $$('.glass-card, .about__content-main, .about__content-skills, .projects__row, .contact__form-container, .code-window')
+    const cards = $$('.glass-card, .about__content-main, .about__content-skills, .projects__card, .contact__form-container, .code-window')
     cards.forEach((card) => {
       card.addEventListener('mousemove', (e) => {
         const r = card.getBoundingClientRect()
@@ -324,54 +324,92 @@
   ;(function projectsSlider() {
     const slider = document.getElementById('projectsSlider')
     const track = document.getElementById('projectsTrack')
+    const nav = document.getElementById('projectsNav')
     const prevBtn = document.getElementById('projectsPrev')
     const nextBtn = document.getElementById('projectsNext')
     const dotsWrap = document.getElementById('projectsDots')
     const counter = document.getElementById('projectsCounter')
     if (!slider || !track) return
 
-    const slides = $$('.projects__row', track)
+    const slides = $$('.projects__card', track)
     const total = slides.length
     if (!total) return
 
-    let index = 0
+    let page = 0
+    // 0, not 1: `measure()` bails when the count is unchanged, and a phone-width
+    // first paint really does resolve to 1 — seeding it here would skip the
+    // initial build entirely.
+    let perView = 0
+    let pages = 1
     let autoTimer = null
-    const AUTO_MS = 7000
+    const AUTO_MS = 5500
 
-    if (dotsWrap) {
+    // CSS owns the breakpoints (--per-view on .projects__track); reading the
+    // computed value keeps paging and layout from ever disagreeing.
+    function readPerView() {
+      const raw = parseInt(getComputedStyle(track).getPropertyValue('--per-view'), 10)
+      const n = Number.isFinite(raw) && raw > 0 ? raw : 1
+      return Math.min(n, total)
+    }
+
+    // Index of the first card on a page. The final page is pulled flush with
+    // the right edge so a partial row never leaves dead space.
+    function firstIndexOf(p) {
+      return Math.min(p * perView, Math.max(0, total - perView))
+    }
+
+    function offsetOf(p) {
+      const first = slides[firstIndexOf(p)]
+      if (!first) return 0
+      return first.offsetLeft - slides[0].offsetLeft
+    }
+
+    function buildDots() {
+      if (!dotsWrap) return
       dotsWrap.innerHTML = ''
-      for (let i = 0; i < total; i++) {
+      for (let i = 0; i < pages; i++) {
         const dot = document.createElement('button')
         dot.type = 'button'
         dot.className = 'projects__dot'
-        dot.setAttribute('aria-label', `Go to project ${i + 1}`)
+        dot.setAttribute('aria-label', `Go to project page ${i + 1}`)
         dot.addEventListener('click', () => goTo(i, true))
         dotsWrap.appendChild(dot)
       }
     }
 
     function update() {
-      track.style.transform = `translate3d(-${index * 100}%, 0, 0)`
+      track.style.transform = `translate3d(${-offsetOf(page)}px, 0, 0)`
       if (dotsWrap) {
         $$('.projects__dot', dotsWrap).forEach((d, i) => {
-          d.classList.toggle('projects__dot--active', i === index)
+          d.classList.toggle('projects__dot--active', i === page)
         })
       }
       if (counter) {
-        counter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
+        counter.textContent = `${String(page + 1).padStart(2, '0')} / ${String(pages).padStart(2, '0')}`
       }
-      slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== index)))
-      if (prevBtn) prevBtn.disabled = total <= 1
-      if (nextBtn) nextBtn.disabled = total <= 1
+      if (prevBtn) prevBtn.disabled = pages <= 1
+      if (nextBtn) nextBtn.disabled = pages <= 1
+      if (nav) nav.classList.toggle('projects__nav--hidden', pages <= 1)
+    }
+
+    // Re-derive the page count whenever the breakpoint moves under us.
+    function measure() {
+      const nextPerView = readPerView()
+      if (nextPerView === perView) return false
+      perView = nextPerView
+      pages = Math.max(1, Math.ceil(total / perView))
+      page = Math.min(page, pages - 1)
+      buildDots()
+      return true
     }
 
     function goTo(i, userAction) {
-      index = (i + total) % total
+      page = (i + pages) % pages
       update()
       if (userAction) restartAuto()
     }
-    const next = (u) => goTo(index + 1, u)
-    const prev = (u) => goTo(index - 1, u)
+    const next = (u) => goTo(page + 1, u)
+    const prev = (u) => goTo(page - 1, u)
 
     if (prevBtn) prevBtn.addEventListener('click', () => prev(true))
     if (nextBtn) nextBtn.addEventListener('click', () => next(true))
@@ -407,7 +445,7 @@
       }
       if (locked !== 'x') return
       deltaX = dx
-      track.style.transform = `translate3d(${-index * slider.clientWidth + deltaX}px, 0, 0)`
+      track.style.transform = `translate3d(${-offsetOf(page) + deltaX}px, 0, 0)`
     }
     function onEnd() {
       if (!dragging) return
@@ -435,7 +473,10 @@
     window.addEventListener('mouseup', onEnd)
 
     function startAuto() {
-      if (total <= 1 || prefersReduced) return
+      // `document.hidden` covers the load-in-a-background-tab case, where no
+      // visibilitychange ever fires and the deck would otherwise have paged on
+      // before anyone looked at it.
+      if (pages <= 1 || prefersReduced || document.hidden) return
       stopAuto()
       autoTimer = setInterval(() => next(false), AUTO_MS)
     }
@@ -444,12 +485,42 @@
 
     slider.addEventListener('mouseenter', stopAuto)
     slider.addEventListener('mouseleave', startAuto)
-    slider.addEventListener('focusin', stopAuto)
     slider.addEventListener('focusout', startAuto)
     document.addEventListener('visibilitychange', () => {
       document.hidden ? stopAuto() : startAuto()
     })
 
+    // Tabbing into an off-screen card would otherwise leave focus invisible;
+    // page to it instead of hiding those cards from assistive tech.
+    slider.addEventListener('focusin', (e) => {
+      stopAuto()
+      const card = e.target.closest('.projects__card')
+      if (!card) return
+      const i = slides.indexOf(card)
+      if (i < 0) return
+      const target = Math.min(Math.floor(i / perView), pages - 1)
+      if (target !== page) goTo(target, false)
+    })
+
+    // The browser may try to scroll a focused card into view; the track's
+    // transform is the only thing allowed to move.
+    slider.addEventListener('scroll', () => { slider.scrollLeft = 0 })
+
+    let resizeTimer = null
+    window.addEventListener('resize', () => {
+      // Skip the reflow animation while the viewport is still in motion.
+      track.style.transition = 'none'
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        measure()
+        update()
+        track.style.transition = ''
+        restartAuto()
+      }, 150)
+      update()
+    })
+
+    measure()
     update()
     startAuto()
   })()

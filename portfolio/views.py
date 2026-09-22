@@ -91,8 +91,15 @@ class project_Details(View):
         try:
             project = Project.objects.get(slug=slug)
 
+            image_url = project.image_url
             data = {
                 "project": project,
+                # og:image must be absolute. `build_absolute_uri` leaves a full
+                # URL untouched and only prefixes host/scheme onto the
+                # static-relative paths that legacy rows still hold.
+                "og_image": (
+                    request.build_absolute_uri(image_url) if image_url else ""
+                ),
                 "skills": [
                     tool.strip()
                     for tool in project.tools_used.split(",")
