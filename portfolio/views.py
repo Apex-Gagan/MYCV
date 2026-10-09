@@ -6,6 +6,7 @@ from email_validator import EmailNotValidError, validate_email
 
 from .email import send_email
 from .models import *
+from .spam_filter import screen_submission
 
 
 def is_valid_email_address(email):
@@ -43,6 +44,13 @@ class Home(View):
         if not message:
             return self._field_error("message", "Please enter a message.")
 
+        # Spam gate: reject links/URLs and SEO/promotional outreach before we
+        # spend an email on it. See portfolio/spam_filter.py for the policy.
+        spam = screen_submission(name=name, message=message)
+        if spam:
+            field, reason = spam
+            return self._field_error(field, reason)
+
         sent = send_email(
             subject_field="Lead",
             name=name,
@@ -67,23 +75,6 @@ class Home(View):
         return JsonResponse(
             {"status": "error", "field": field, "message": message}, status=400
         )
-
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
-        if len(name) == 0:
-            return HttpResponse(content="name", status=400)
-        if email == "" or not is_valid_email_address(email):
-            return HttpResponse(content="email", status=400)
-        if message == "":
-            return HttpResponse(content="message", status=400)
-        else:
-            # contact = Contact.objects.create(name=name, email=email, message=message)
-            # contact.save()
-            send_email(subject_field="Lead", name=name, message_body=message, sender_email=email)
-
-            return HttpResponse(content="success", status=200)
-
 
 
 class project_Details(View):

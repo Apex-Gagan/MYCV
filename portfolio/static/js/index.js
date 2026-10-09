@@ -591,6 +591,112 @@
     const btnLabel = btn ? btn.querySelector('.btn__label') : null
     const fields = ['name', 'email', 'message']
 
+    /* ----------------------------------------------------------------
+       Spam policy — a mirror of portfolio/spam_filter.py for instant
+       feedback. The server re-checks everything, so this list only has
+       to be good enough to catch honest mistakes; keep it roughly in
+       sync with the Python tables, which are the source of truth.
+       ---------------------------------------------------------------- */
+    const spamPolicy = (function () {
+      const MAX_MESSAGE_LENGTH = 4000
+
+      const LINK_TLDS = new Set([
+        'com', 'net', 'org', 'info', 'biz', 'edu', 'gov', 'io', 'co', 'ai',
+        'app', 'dev', 'me', 'tv', 'cc', 'gg', 'to', 'ly', 'us', 'uk', 'in',
+        'ca', 'au', 'de', 'fr', 'it', 'es', 'nl', 'ru', 'cn', 'jp', 'br',
+        'sg', 'ae', 'eu', 'xyz', 'online', 'site', 'website', 'shop', 'store',
+        'tech', 'top', 'club', 'live', 'pro', 'vip', 'work', 'space', 'fun',
+        'icu', 'buzz', 'world', 'company', 'agency', 'digital', 'marketing',
+        'services', 'solutions', 'media', 'email', 'link', 'click', 'expert',
+        'guru', 'finance', 'life',
+      ])
+
+      const SPAM_TERMS = [
+        'seo', 'search engine optimization', 'search engine optimisation',
+        'seo services', 'seo expert', 'seo specialist', 'seo agency',
+        'seo company', 'backlink', 'backlinks', 'link building', 'link exchange',
+        'do follow', 'dofollow', 'off page', 'off-page', 'on page', 'on-page',
+        'domain authority', 'domain rating', 'page rank', 'pagerank',
+        'google ranking', 'rank on google', 'rank your website', 'rank higher',
+        'ranking on google', 'first page of google', 'top of google',
+        'number one on google', 'improve your ranking', 'improve your website',
+        'boost your ranking', 'search ranking', 'increase traffic',
+        'website traffic', 'web traffic', 'organic traffic', 'drive traffic',
+        'increase sales', 'boost sales', 'increase your sales',
+        'increase your revenue', 'grow your business online', 'digital marketing',
+        'social media marketing', 'smm panel', 'lead generation',
+        'generate leads', 'b2b leads', 'bulk email', 'cold email',
+        'email marketing', 'mass email', 'ppc', 'pay per click', 'google ads',
+        'meta ads', 'facebook ads', 'run ads for you', 'web design services',
+        'web development services', 'website development company',
+        'we noticed your website', 'i visited your website',
+        'came across your website', 'found your website', 'your website ranking',
+        'make money online', 'earn money online', 'work from home',
+        'passive income', 'investment opportunity', 'guaranteed returns',
+        'double your money', 'crypto', 'cryptocurrency', 'bitcoin', 'forex',
+        'casino', 'betting', 'viagra', 'cialis', 'payday loan', 'loan offer',
+        'limited time offer', 'special offer', 'act now', 'click here',
+        'affordable price', 'cheapest price', 'best price guaranteed',
+      ]
+
+      const LINK_MESSAGE =
+        'Please remove any website links or URLs from your message. ' +
+        'You can share links after we connect.'
+      const SPAM_MESSAGE =
+        "Your message looks like marketing or SEO outreach, which this form " +
+        "doesn't accept. Please write a genuine enquiry."
+      const TOO_LONG_MESSAGE =
+        'Your message is too long. Please keep it under 4000 characters.'
+      const NAME_LINK_MESSAGE =
+        'Please enter a real name without any links or URLs.'
+
+      const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const spamRe = new RegExp(
+        '\\b(?:' +
+          SPAM_TERMS.map((t) => t.split(' ').map(escapeRe).join('\\s+')).join('|') +
+          ')\\b',
+        'i'
+      )
+
+      const schemeRe = /\b(?:h[a-z]{2,3}|ftp|ftps|sftp|mailto|tel)\s*:\s*\/*/i
+      const wwwRe = /\bwww\d{0,3}\s*\./i
+      const markupLinkRe = /\]\s*\(\s*\S+\s*\)|\[\s*(?:url|link)\b/i
+      const emailRe = /[\w.+-]+@[\w-]+\.[\w.-]+/gi
+      const domainRe = /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+([a-z]{2,24})\b/gi
+      const dotObfRe =
+        /\s*(?:\[\s*\.?\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*dot\s*\}|\bd0t\b|\bdot\b)\s*/gi
+
+      function containsLink(text) {
+        if (!text) return false
+        if (schemeRe.test(text) || wwwRe.test(text) || markupLinkRe.test(text)) {
+          return true
+        }
+        const scrubbed = text.replace(emailRe, ' ').replace(dotObfRe, '.')
+        domainRe.lastIndex = 0
+        let m
+        while ((m = domainRe.exec(scrubbed)) !== null) {
+          if (LINK_TLDS.has(m[1].toLowerCase())) return true
+        }
+        return false
+      }
+
+      function containsSpamTerms(text) {
+        return !!text && spamRe.test(text)
+      }
+
+      // Returns { field, message } for the first broken rule, or null.
+      function screen(name, message) {
+        if (containsLink(name)) return { field: 'name', message: NAME_LINK_MESSAGE }
+        const msg = (message || '').trim()
+        if (msg.length > MAX_MESSAGE_LENGTH) return { field: 'message', message: TOO_LONG_MESSAGE }
+        if (containsLink(msg)) return { field: 'message', message: LINK_MESSAGE }
+        if (containsSpamTerms(msg)) return { field: 'message', message: SPAM_MESSAGE }
+        return null
+      }
+
+      return { screen }
+    })()
+
     function setLabel(text) {
       if (btnLabel) btnLabel.textContent = text
       else if (btn) btn.textContent = text
@@ -632,6 +738,16 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
       clearErrors()
+
+      // Spam policy (mirrors the server). Blocks links/URLs and SEO/marketing
+      // outreach before a request is ever sent.
+      const nameVal = (document.getElementById('name') || {}).value || ''
+      const messageVal = (document.getElementById('message') || {}).value || ''
+      const violation = spamPolicy.screen(nameVal, messageVal)
+      if (violation) {
+        showError(violation.field, violation.message)
+        return
+      }
 
       if (btn) btn.disabled = true
       setLabel('Sending…')
