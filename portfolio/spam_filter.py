@@ -4,7 +4,7 @@ The browser runs a mirror of these rules for instant feedback, but this module
 is the real enforcement: every submission that reaches the view is screened
 here before any email is sent. JavaScript checks can be bypassed; this cannot.
 
-The policy has two rules:
+The policy has three rules:
 
   1. No links of any kind. Full URLs (``https://…``), bare domains
      (``example.com``), ``www.`` prefixes, markdown/BBCode links, ``mailto:``
@@ -12,9 +12,12 @@ The policy has two rules:
      ``hxxp://``) are all rejected inside the message.
   2. No SEO / promotional outreach vocabulary — the words and phrases that
      the spam we actually receive is built from (see ``SPAM_TERMS``).
+  3. No canned contact-form spam sentences — whole templated phrases that
+     recurring bot spam is built from (see ``SPAM_PHRASES``), e.g.
+     "I would like more information. Please contact me by email".
 
-Everything the policy blocks lives in the three tables below
-(``LINK_TLDS``, ``SPAM_TERMS``, ``MAX_MESSAGE_LENGTH``). To tune the filter,
+Everything the policy blocks lives in the tables below (``LINK_TLDS``,
+``SPAM_TERMS``, ``SPAM_PHRASES``, ``MAX_MESSAGE_LENGTH``). To tune the filter,
 edit those — the matching logic underneath rarely needs to change.
 
 Public API:
@@ -83,14 +86,33 @@ SPAM_TERMS = [
     "affordable price", "cheapest price", "best price guaranteed",
 ]
 
+# Canned sentences that templated bot spam is built from. Unlike SPAM_TERMS
+# (single words/short terms), each entry here is a whole phrase, so an ordinary
+# word it happens to contain never trips the filter on its own. Matching is
+# case-insensitive and tolerant of punctuation/spacing, so "e-mail", "e mail"
+# and "email" all count. Add new canned sentences here as they show up.
+SPAM_PHRASES = [
+    # The recurring "I would like more information. Please contact me by
+    # email — <scraped name>" lead-bot template and its close variants.
+    "i would like more information",
+    "i would like to get more information",
+    "i would like to know more",
+    "contact me by email",
+    "contact me by e mail",
+    "contact me via email",
+    "please get back to me by email",
+    "reply to me by email",
+    "get back to me as soon as possible",
+]
+
 # User-facing messages (kept generic so spammers can't tune against them).
 LINK_MESSAGE = (
     "Please remove any website links or URLs from your message. "
     "You can share links after we connect."
 )
 SPAM_MESSAGE = (
-    "Your message looks like marketing or SEO outreach, which this form "
-    "doesn't accept. Please write a genuine enquiry."
+    "Your message looks like automated or promotional spam, which this form "
+    "doesn't accept. Please write a genuine enquiry in your own words."
 )
 TOO_LONG_MESSAGE = "Your message is too long. Please keep it under 4000 characters."
 NAME_LINK_MESSAGE = "Please enter a real name without any links or URLs."
@@ -133,7 +155,25 @@ def _build_spam_regex(terms):
     return re.compile(r"(?<!\w)(?:" + "|".join(parts) + r")(?!\w)", re.I)
 
 
+def _build_phrase_regex(phrases):
+    """Compile canned phrases into one punctuation-tolerant pattern.
+
+    Each phrase is reduced to its alphanumeric words and rejoined with a
+    "any run of non-word characters" separator, so "contact me by e-mail",
+    "contact me by e mail" and "contact me by  email" all match the same
+    entry. Lookarounds keep it to whole-word matches.
+    """
+    parts = []
+    for phrase in phrases:
+        words = re.findall(r"[a-z0-9]+", phrase.lower())
+        if not words:
+            continue
+        parts.append(r"[\W_]+".join(re.escape(w) for w in words))
+    return re.compile(r"(?<![a-z0-9])(?:" + "|".join(parts) + r")(?![a-z0-9])", re.I)
+
+
 _SPAM_RE = _build_spam_regex(SPAM_TERMS)
+_SPAM_PHRASE_RE = _build_phrase_regex(SPAM_PHRASES)
 
 
 def _normalise(text):
@@ -163,6 +203,11 @@ def contains_spam_terms(text):
     return bool(text) and bool(_SPAM_RE.search(text))
 
 
+def contains_spam_phrase(text):
+    """True when *text* contains a canned contact-form spam sentence."""
+    return bool(text) and bool(_SPAM_PHRASE_RE.search(text))
+
+
 def message_rejection_reason(text):
     """Return a user-facing reason to reject *text*, or None if it's clean."""
     text = (text or "").strip()
@@ -170,7 +215,7 @@ def message_rejection_reason(text):
         return TOO_LONG_MESSAGE
     if contains_link(text):
         return LINK_MESSAGE
-    if contains_spam_terms(text):
+    if contains_spam_terms(text) or contains_spam_phrase(text):
         return SPAM_MESSAGE
     return None
 

@@ -639,12 +639,26 @@
         'affordable price', 'cheapest price', 'best price guaranteed',
       ]
 
+      // Canned contact-form spam sentences (matched as whole phrases, tolerant
+      // of punctuation/spacing). Mirrors SPAM_PHRASES in spam_filter.py.
+      const SPAM_PHRASES = [
+        'i would like more information',
+        'i would like to get more information',
+        'i would like to know more',
+        'contact me by email',
+        'contact me by e mail',
+        'contact me via email',
+        'please get back to me by email',
+        'reply to me by email',
+        'get back to me as soon as possible',
+      ]
+
       const LINK_MESSAGE =
         'Please remove any website links or URLs from your message. ' +
         'You can share links after we connect.'
       const SPAM_MESSAGE =
-        "Your message looks like marketing or SEO outreach, which this form " +
-        "doesn't accept. Please write a genuine enquiry."
+        "Your message looks like automated or promotional spam, which this " +
+        "form doesn't accept. Please write a genuine enquiry in your own words."
       const TOO_LONG_MESSAGE =
         'Your message is too long. Please keep it under 4000 characters.'
       const NAME_LINK_MESSAGE =
@@ -654,6 +668,17 @@
       const spamRe = new RegExp(
         '\\b(?:' +
           SPAM_TERMS.map((t) => t.split(' ').map(escapeRe).join('\\s+')).join('|') +
+          ')\\b',
+        'i'
+      )
+      // Phrases: reduce each to alphanumeric words joined by "any non-word run"
+      // so "e-mail", "e mail" and "email" all match. \b (not lookbehind) keeps
+      // this valid on older browsers; phrases start/end with word chars anyway.
+      const phraseRe = new RegExp(
+        '\\b(?:' +
+          SPAM_PHRASES.map((p) =>
+            (p.toLowerCase().match(/[a-z0-9]+/g) || []).join('[\\W_]+')
+          ).join('|') +
           ')\\b',
         'i'
       )
@@ -684,13 +709,19 @@
         return !!text && spamRe.test(text)
       }
 
+      function containsSpamPhrase(text) {
+        return !!text && phraseRe.test(text)
+      }
+
       // Returns { field, message } for the first broken rule, or null.
       function screen(name, message) {
         if (containsLink(name)) return { field: 'name', message: NAME_LINK_MESSAGE }
         const msg = (message || '').trim()
         if (msg.length > MAX_MESSAGE_LENGTH) return { field: 'message', message: TOO_LONG_MESSAGE }
         if (containsLink(msg)) return { field: 'message', message: LINK_MESSAGE }
-        if (containsSpamTerms(msg)) return { field: 'message', message: SPAM_MESSAGE }
+        if (containsSpamTerms(msg) || containsSpamPhrase(msg)) {
+          return { field: 'message', message: SPAM_MESSAGE }
+        }
         return null
       }
 

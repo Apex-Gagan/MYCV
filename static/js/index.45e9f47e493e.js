@@ -1,0 +1,820 @@
+/* ==========================================================================
+   Gagandeep Singh — Portfolio interactions
+   Vanilla JS, no dependencies.
+   ========================================================================== */
+;(function () {
+  'use strict'
+
+  const $ = (sel, root) => (root || document).querySelector(sel)
+  const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel))
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  /* ------------------------------------------------------------------
+     Mobile menu — smooth open/close with scroll lock and focus return
+     ------------------------------------------------------------------ */
+  ;(function mobileMenu() {
+    const btn = $('.header__main-ham-menu-cont')
+    const menu = $('.header__sm-menu')
+    if (!btn || !menu) return
+
+    const links = $$('.header__sm-menu-link a', menu)
+    let isOpen = false
+    let scrollY = 0
+
+    function open() {
+      if (isOpen) return
+      isOpen = true
+      scrollY = window.scrollY
+      menu.classList.add('header__sm-menu--active')
+      btn.classList.add('is-active')
+      btn.setAttribute('aria-expanded', 'true')
+      menu.setAttribute('aria-hidden', 'false')
+      document.body.classList.add('menu-open')
+      // Preserve scroll position while the body is locked.
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+    }
+
+    function close() {
+      if (!isOpen) return
+      isOpen = false
+      menu.classList.remove('header__sm-menu--active')
+      btn.classList.remove('is-active')
+      btn.setAttribute('aria-expanded', 'false')
+      menu.setAttribute('aria-hidden', 'true')
+      document.body.classList.remove('menu-open')
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      // `behavior: instant` beats the html{scroll-behavior:smooth} rule, which
+      // would otherwise animate the restore and look like a jump.
+      window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      isOpen ? close() : open()
+    })
+
+    // The overlay's own X — the header button sits beneath the overlay and is
+    // not tappable while the menu is open.
+    $$('[data-menu-close]', menu).forEach((closeBtn) => {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        close()
+        btn.focus({ preventScroll: true })
+      })
+    })
+
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href') || ''
+        const target = href.startsWith('/#') ? $(href.slice(1)) : null
+
+        close()
+
+        // Let the overlay finish closing before scrolling to an in-page anchor.
+        if (target) {
+          e.preventDefault()
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' })
+            history.replaceState(null, '', href)
+          }, 260)
+        }
+      })
+    })
+
+    // Click on the backdrop (outside the menu content) closes it.
+    menu.addEventListener('click', (e) => {
+      if (!e.target.closest('.header__sm-menu-content')) close()
+    })
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        close()
+        btn.focus()
+      }
+    })
+
+    // Never leave the overlay stuck open when resizing up to desktop.
+    let resizeTimer
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        if (isOpen && window.innerWidth > 900) close()
+      }, 120)
+    })
+  })()
+
+  /* ------------------------------------------------------------------
+     Logo → home
+     ------------------------------------------------------------------ */
+  ;(function logoLink() {
+    const logo = $('.header__logo-container')
+    if (!logo) return
+    logo.addEventListener('click', () => { location.href = '/' })
+    logo.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = '/' }
+    })
+  })()
+
+  /* ------------------------------------------------------------------
+     Header shrink + scroll progress + back-to-top
+     ------------------------------------------------------------------ */
+  ;(function scrollChrome() {
+    const header = $('.header')
+    const bar = $('.scroll-progress')
+    const toTop = $('.to-top')
+    let ticking = false
+
+    function paint() {
+      const y = window.scrollY
+      const max = document.documentElement.scrollHeight - window.innerHeight
+
+      if (header) header.classList.toggle('header--scrolled', y > 24)
+      if (bar) bar.style.transform = `scaleX(${max > 0 ? Math.min(y / max, 1) : 0})`
+      if (toTop) toTop.classList.toggle('is-visible', y > 620)
+
+      ticking = false
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) { window.requestAnimationFrame(paint); ticking = true }
+    }, { passive: true })
+
+    paint()
+
+    if (toTop) {
+      toTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' })
+      })
+    }
+  })()
+
+  /* ------------------------------------------------------------------
+     Cursor spotlight (pointer devices only)
+     ------------------------------------------------------------------ */
+  ;(function cursorGlow() {
+    const glow = $('.cursor-glow')
+    if (!glow || prefersReduced) return
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    let x = window.innerWidth / 2
+    let y = window.innerHeight / 2
+    let cx = x
+    let cy = y
+    let running = false
+
+    function loop() {
+      cx += (x - cx) * 0.12
+      cy += (y - cy) * 0.12
+      glow.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`
+      if (running) requestAnimationFrame(loop)
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      x = e.clientX
+      y = e.clientY
+      if (!running) { running = true; glow.classList.add('is-on'); requestAnimationFrame(loop) }
+    }, { passive: true })
+
+    document.addEventListener('mouseleave', () => glow.classList.remove('is-on'))
+    document.addEventListener('mouseenter', () => glow.classList.add('is-on'))
+  })()
+
+  /* ------------------------------------------------------------------
+     Pointer-tracked sheen on cards
+     ------------------------------------------------------------------ */
+  ;(function cardSheen() {
+    if (prefersReduced) return
+    const cards = $$('.glass-card, .about__content-main, .about__content-skills, .projects__card, .contact__form-container, .code-window')
+    cards.forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect()
+        card.style.setProperty('--mx', `${e.clientX - r.left}px`)
+        card.style.setProperty('--my', `${e.clientY - r.top}px`)
+      }, { passive: true })
+    })
+  })()
+
+  /* ------------------------------------------------------------------
+     Magnetic buttons
+     ------------------------------------------------------------------ */
+  ;(function magnetic() {
+    if (prefersReduced) return
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    $$('[data-magnetic]').forEach((el) => {
+      const strength = 0.28
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect()
+        const dx = (e.clientX - (r.left + r.width / 2)) * strength
+        const dy = (e.clientY - (r.top + r.height / 2)) * strength
+        el.style.transform = `translate(${dx}px, ${dy - 3}px)`
+      }, { passive: true })
+      el.addEventListener('mouseleave', () => { el.style.transform = '' })
+    })
+  })()
+
+  /* ------------------------------------------------------------------
+     Hero: typing role line
+     ------------------------------------------------------------------ */
+  ;(function typeRoles() {
+    const out = $('.home-hero__typed')
+    if (!out) return
+
+    let roles = []
+    try { roles = JSON.parse(out.dataset.roles || '[]') } catch (_) { roles = [] }
+    if (!roles.length) return
+
+    if (prefersReduced) { out.textContent = roles[0]; return }
+
+    let roleIdx = 0
+    let charIdx = 0
+    let deleting = false
+
+    function tick() {
+      const role = roles[roleIdx]
+      charIdx += deleting ? -1 : 1
+      out.textContent = role.slice(0, charIdx)
+
+      let delay = deleting ? 38 : 74
+
+      if (!deleting && charIdx === role.length) {
+        delay = 1900
+        deleting = true
+      } else if (deleting && charIdx === 0) {
+        deleting = false
+        roleIdx = (roleIdx + 1) % roles.length
+        delay = 380
+      }
+      setTimeout(tick, delay)
+    }
+
+    setTimeout(tick, 900)
+  })()
+
+  /* ------------------------------------------------------------------
+     Count-up stats
+     ------------------------------------------------------------------ */
+  ;(function countUp() {
+    const nums = $$('[data-count]')
+    if (!nums.length) return
+
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      nums.forEach((n) => { n.textContent = n.dataset.count })
+      return
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        const el = entry.target
+        io.unobserve(el)
+
+        const target = parseFloat(el.dataset.count) || 0
+        const duration = 1400
+        const start = performance.now()
+
+        function step(now) {
+          const p = Math.min((now - start) / duration, 1)
+          const eased = 1 - Math.pow(1 - p, 3)
+          el.textContent = Math.round(target * eased)
+          if (p < 1) requestAnimationFrame(step)
+          else el.textContent = target
+        }
+        requestAnimationFrame(step)
+      })
+    }, { threshold: 0.4 })
+
+    nums.forEach((n) => io.observe(n))
+  })()
+
+  /* ------------------------------------------------------------------
+     Scroll-spy for the desktop nav
+     ------------------------------------------------------------------ */
+  ;(function scrollSpy() {
+    const links = $$('.header__link[href*="#"]')
+    if (!links.length || !('IntersectionObserver' in window)) return
+
+    const map = new Map()
+    links.forEach((link) => {
+      const id = (link.getAttribute('href') || '').split('#')[1]
+      const section = id && document.getElementById(id)
+      if (section) map.set(section, link)
+    })
+    if (!map.size) return
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        links.forEach((l) => l.classList.remove('header__link--active'))
+        const active = map.get(entry.target)
+        if (active) active.classList.add('header__link--active')
+      })
+    }, { rootMargin: '-45% 0px -50% 0px' })
+
+    map.forEach((_, section) => io.observe(section))
+  })()
+
+  /* ------------------------------------------------------------------
+     Projects slider
+     ------------------------------------------------------------------ */
+  ;(function projectsSlider() {
+    const slider = document.getElementById('projectsSlider')
+    const track = document.getElementById('projectsTrack')
+    const nav = document.getElementById('projectsNav')
+    const prevBtn = document.getElementById('projectsPrev')
+    const nextBtn = document.getElementById('projectsNext')
+    const dotsWrap = document.getElementById('projectsDots')
+    const counter = document.getElementById('projectsCounter')
+    if (!slider || !track) return
+
+    const slides = $$('.projects__card', track)
+    const total = slides.length
+    if (!total) return
+
+    let page = 0
+    // 0, not 1: `measure()` bails when the count is unchanged, and a phone-width
+    // first paint really does resolve to 1 — seeding it here would skip the
+    // initial build entirely.
+    let perView = 0
+    let pages = 1
+    let autoTimer = null
+    const AUTO_MS = 5500
+
+    // CSS owns the breakpoints (--per-view on .projects__track); reading the
+    // computed value keeps paging and layout from ever disagreeing.
+    function readPerView() {
+      const raw = parseInt(getComputedStyle(track).getPropertyValue('--per-view'), 10)
+      const n = Number.isFinite(raw) && raw > 0 ? raw : 1
+      return Math.min(n, total)
+    }
+
+    // Index of the first card on a page. The final page is pulled flush with
+    // the right edge so a partial row never leaves dead space.
+    function firstIndexOf(p) {
+      return Math.min(p * perView, Math.max(0, total - perView))
+    }
+
+    function offsetOf(p) {
+      const first = slides[firstIndexOf(p)]
+      if (!first) return 0
+      return first.offsetLeft - slides[0].offsetLeft
+    }
+
+    function buildDots() {
+      if (!dotsWrap) return
+      dotsWrap.innerHTML = ''
+      for (let i = 0; i < pages; i++) {
+        const dot = document.createElement('button')
+        dot.type = 'button'
+        dot.className = 'projects__dot'
+        dot.setAttribute('aria-label', `Go to project page ${i + 1}`)
+        dot.addEventListener('click', () => goTo(i, true))
+        dotsWrap.appendChild(dot)
+      }
+    }
+
+    function update() {
+      track.style.transform = `translate3d(${-offsetOf(page)}px, 0, 0)`
+      if (dotsWrap) {
+        $$('.projects__dot', dotsWrap).forEach((d, i) => {
+          d.classList.toggle('projects__dot--active', i === page)
+        })
+      }
+      if (counter) {
+        counter.textContent = `${String(page + 1).padStart(2, '0')} / ${String(pages).padStart(2, '0')}`
+      }
+      if (prevBtn) prevBtn.disabled = pages <= 1
+      if (nextBtn) nextBtn.disabled = pages <= 1
+      if (nav) nav.classList.toggle('projects__nav--hidden', pages <= 1)
+    }
+
+    // Re-derive the page count whenever the breakpoint moves under us.
+    function measure() {
+      const nextPerView = readPerView()
+      if (nextPerView === perView) return false
+      perView = nextPerView
+      pages = Math.max(1, Math.ceil(total / perView))
+      page = Math.min(page, pages - 1)
+      buildDots()
+      return true
+    }
+
+    function goTo(i, userAction) {
+      page = (i + pages) % pages
+      update()
+      if (userAction) restartAuto()
+    }
+    const next = (u) => goTo(page + 1, u)
+    const prev = (u) => goTo(page - 1, u)
+
+    if (prevBtn) prevBtn.addEventListener('click', () => prev(true))
+    if (nextBtn) nextBtn.addEventListener('click', () => next(true))
+
+    document.addEventListener('keydown', (e) => {
+      if (document.body.classList.contains('menu-open')) return
+      const r = slider.getBoundingClientRect()
+      if (!(r.top < window.innerHeight && r.bottom > 0)) return
+      if (e.key === 'ArrowRight') next(true)
+      if (e.key === 'ArrowLeft') prev(true)
+    })
+
+    // Drag / swipe
+    let startX = 0
+    let startY = 0
+    let deltaX = 0
+    let dragging = false
+    let locked = null
+    const THRESHOLD = 50
+
+    function onStart(x, y) {
+      startX = x; startY = y; deltaX = 0; dragging = true; locked = null
+      track.style.transition = 'none'
+    }
+    function onMove(x, y) {
+      if (!dragging) return
+      const dx = x - startX
+      const dy = y - startY
+      if (locked === null) {
+        // Only hijack the gesture once it is clearly horizontal.
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return
+        locked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'
+      }
+      if (locked !== 'x') return
+      deltaX = dx
+      track.style.transform = `translate3d(${-offsetOf(page) + deltaX}px, 0, 0)`
+    }
+    function onEnd() {
+      if (!dragging) return
+      dragging = false
+      track.style.transition = ''
+      if (locked === 'x' && Math.abs(deltaX) > THRESHOLD) {
+        deltaX < 0 ? next(true) : prev(true)
+      } else {
+        update()
+      }
+      locked = null
+    }
+
+    slider.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX, e.touches[0].clientY), { passive: true })
+    slider.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX, e.touches[0].clientY), { passive: true })
+    slider.addEventListener('touchend', onEnd)
+    slider.addEventListener('touchcancel', onEnd)
+
+    slider.addEventListener('mousedown', (e) => {
+      if (e.target.closest('a, button')) return
+      e.preventDefault()
+      onStart(e.clientX, e.clientY)
+    })
+    window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY))
+    window.addEventListener('mouseup', onEnd)
+
+    function startAuto() {
+      // `document.hidden` covers the load-in-a-background-tab case, where no
+      // visibilitychange ever fires and the deck would otherwise have paged on
+      // before anyone looked at it.
+      if (pages <= 1 || prefersReduced || document.hidden) return
+      stopAuto()
+      autoTimer = setInterval(() => next(false), AUTO_MS)
+    }
+    function stopAuto() { if (autoTimer) { clearInterval(autoTimer); autoTimer = null } }
+    function restartAuto() { stopAuto(); startAuto() }
+
+    slider.addEventListener('mouseenter', stopAuto)
+    slider.addEventListener('mouseleave', startAuto)
+    slider.addEventListener('focusout', startAuto)
+    document.addEventListener('visibilitychange', () => {
+      document.hidden ? stopAuto() : startAuto()
+    })
+
+    // Tabbing into an off-screen card would otherwise leave focus invisible;
+    // page to it instead of hiding those cards from assistive tech.
+    slider.addEventListener('focusin', (e) => {
+      stopAuto()
+      const card = e.target.closest('.projects__card')
+      if (!card) return
+      const i = slides.indexOf(card)
+      if (i < 0) return
+      const target = Math.min(Math.floor(i / perView), pages - 1)
+      if (target !== page) goTo(target, false)
+    })
+
+    // The browser may try to scroll a focused card into view; the track's
+    // transform is the only thing allowed to move.
+    slider.addEventListener('scroll', () => { slider.scrollLeft = 0 })
+
+    let resizeTimer = null
+    window.addEventListener('resize', () => {
+      // Skip the reflow animation while the viewport is still in motion.
+      track.style.transition = 'none'
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        measure()
+        update()
+        track.style.transition = ''
+        restartAuto()
+      }, 150)
+      update()
+    })
+
+    measure()
+    update()
+    startAuto()
+  })()
+
+  /* ------------------------------------------------------------------
+     Reveal on scroll
+     ------------------------------------------------------------------ */
+  ;(function reveal() {
+    const targets = $$('[data-reveal]')
+    if (!targets.length) return
+
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      targets.forEach((el) => el.classList.add('is-visible'))
+      return
+    }
+
+    targets.forEach((el) => el.classList.add('reveal'))
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        entry.target.classList.add('is-visible')
+        io.unobserve(entry.target)
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' })
+
+    targets.forEach((el) => io.observe(el))
+  })()
+
+  /* ------------------------------------------------------------------
+     Success modal
+     ------------------------------------------------------------------ */
+  const modal = (function successModal() {
+    const el = document.getElementById('myModal')
+    if (!el) return null
+
+    function open() {
+      el.classList.add('is-open')
+      document.body.classList.add('modal-open')
+      const cta = $('.btn-success', el)
+      if (cta) cta.focus()
+    }
+    function close() {
+      el.classList.remove('is-open')
+      document.body.classList.remove('modal-open')
+    }
+
+    el.addEventListener('click', (e) => { if (e.target === el) close() })
+    $$('[data-modal-close]', el).forEach((b) => b.addEventListener('click', (e) => {
+      e.preventDefault()
+      close()
+    }))
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && el.classList.contains('is-open')) close()
+    })
+
+    return { open, close }
+  })()
+
+  /* ------------------------------------------------------------------
+     Contact form — posts to Django, which emails the lead (no storage)
+     ------------------------------------------------------------------ */
+  ;(function contactForm() {
+    const form = document.getElementById('contactForm')
+    if (!form) return
+
+    const btn = document.getElementById('cbtn')
+    const btnLabel = btn ? btn.querySelector('.btn__label') : null
+    const fields = ['name', 'email', 'message']
+
+    /* ----------------------------------------------------------------
+       Spam policy — a mirror of portfolio/spam_filter.py for instant
+       feedback. The server re-checks everything, so this list only has
+       to be good enough to catch honest mistakes; keep it roughly in
+       sync with the Python tables, which are the source of truth.
+       ---------------------------------------------------------------- */
+    const spamPolicy = (function () {
+      const MAX_MESSAGE_LENGTH = 4000
+
+      const LINK_TLDS = new Set([
+        'com', 'net', 'org', 'info', 'biz', 'edu', 'gov', 'io', 'co', 'ai',
+        'app', 'dev', 'me', 'tv', 'cc', 'gg', 'to', 'ly', 'us', 'uk', 'in',
+        'ca', 'au', 'de', 'fr', 'it', 'es', 'nl', 'ru', 'cn', 'jp', 'br',
+        'sg', 'ae', 'eu', 'xyz', 'online', 'site', 'website', 'shop', 'store',
+        'tech', 'top', 'club', 'live', 'pro', 'vip', 'work', 'space', 'fun',
+        'icu', 'buzz', 'world', 'company', 'agency', 'digital', 'marketing',
+        'services', 'solutions', 'media', 'email', 'link', 'click', 'expert',
+        'guru', 'finance', 'life',
+      ])
+
+      const SPAM_TERMS = [
+        'seo', 'search engine optimization', 'search engine optimisation',
+        'seo services', 'seo expert', 'seo specialist', 'seo agency',
+        'seo company', 'backlink', 'backlinks', 'link building', 'link exchange',
+        'do follow', 'dofollow', 'off page', 'off-page', 'on page', 'on-page',
+        'domain authority', 'domain rating', 'page rank', 'pagerank',
+        'google ranking', 'rank on google', 'rank your website', 'rank higher',
+        'ranking on google', 'first page of google', 'top of google',
+        'number one on google', 'improve your ranking', 'improve your website',
+        'boost your ranking', 'search ranking', 'increase traffic',
+        'website traffic', 'web traffic', 'organic traffic', 'drive traffic',
+        'increase sales', 'boost sales', 'increase your sales',
+        'increase your revenue', 'grow your business online', 'digital marketing',
+        'social media marketing', 'smm panel', 'lead generation',
+        'generate leads', 'b2b leads', 'bulk email', 'cold email',
+        'email marketing', 'mass email', 'ppc', 'pay per click', 'google ads',
+        'meta ads', 'facebook ads', 'run ads for you', 'web design services',
+        'web development services', 'website development company',
+        'we noticed your website', 'i visited your website',
+        'came across your website', 'found your website', 'your website ranking',
+        'make money online', 'earn money online', 'work from home',
+        'passive income', 'investment opportunity', 'guaranteed returns',
+        'double your money', 'crypto', 'cryptocurrency', 'bitcoin', 'forex',
+        'casino', 'betting', 'viagra', 'cialis', 'payday loan', 'loan offer',
+        'limited time offer', 'special offer', 'act now', 'click here',
+        'affordable price', 'cheapest price', 'best price guaranteed',
+      ]
+
+      // Canned contact-form spam sentences (matched as whole phrases, tolerant
+      // of punctuation/spacing). Mirrors SPAM_PHRASES in spam_filter.py.
+      const SPAM_PHRASES = [
+        'i would like more information',
+        'i would like to get more information',
+        'i would like to know more',
+        'contact me by email',
+        'contact me by e mail',
+        'contact me via email',
+        'please get back to me by email',
+        'reply to me by email',
+        'get back to me as soon as possible',
+      ]
+
+      const LINK_MESSAGE =
+        'Please remove any website links or URLs from your message. ' +
+        'You can share links after we connect.'
+      const SPAM_MESSAGE =
+        "Your message looks like automated or promotional spam, which this " +
+        "form doesn't accept. Please write a genuine enquiry in your own words."
+      const TOO_LONG_MESSAGE =
+        'Your message is too long. Please keep it under 4000 characters.'
+      const NAME_LINK_MESSAGE =
+        'Please enter a real name without any links or URLs.'
+
+      const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const spamRe = new RegExp(
+        '\\b(?:' +
+          SPAM_TERMS.map((t) => t.split(' ').map(escapeRe).join('\\s+')).join('|') +
+          ')\\b',
+        'i'
+      )
+      // Phrases: reduce each to alphanumeric words joined by "any non-word run"
+      // so "e-mail", "e mail" and "email" all match. \b (not lookbehind) keeps
+      // this valid on older browsers; phrases start/end with word chars anyway.
+      const phraseRe = new RegExp(
+        '\\b(?:' +
+          SPAM_PHRASES.map((p) =>
+            (p.toLowerCase().match(/[a-z0-9]+/g) || []).join('[\\W_]+')
+          ).join('|') +
+          ')\\b',
+        'i'
+      )
+
+      const schemeRe = /\b(?:h[a-z]{2,3}|ftp|ftps|sftp|mailto|tel)\s*:\s*\/*/i
+      const wwwRe = /\bwww\d{0,3}\s*\./i
+      const markupLinkRe = /\]\s*\(\s*\S+\s*\)|\[\s*(?:url|link)\b/i
+      const emailRe = /[\w.+-]+@[\w-]+\.[\w.-]+/gi
+      const domainRe = /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+([a-z]{2,24})\b/gi
+      const dotObfRe =
+        /\s*(?:\[\s*\.?\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*dot\s*\}|\bd0t\b|\bdot\b)\s*/gi
+
+      function containsLink(text) {
+        if (!text) return false
+        if (schemeRe.test(text) || wwwRe.test(text) || markupLinkRe.test(text)) {
+          return true
+        }
+        const scrubbed = text.replace(emailRe, ' ').replace(dotObfRe, '.')
+        domainRe.lastIndex = 0
+        let m
+        while ((m = domainRe.exec(scrubbed)) !== null) {
+          if (LINK_TLDS.has(m[1].toLowerCase())) return true
+        }
+        return false
+      }
+
+      function containsSpamTerms(text) {
+        return !!text && spamRe.test(text)
+      }
+
+      function containsSpamPhrase(text) {
+        return !!text && phraseRe.test(text)
+      }
+
+      // Returns { field, message } for the first broken rule, or null.
+      function screen(name, message) {
+        if (containsLink(name)) return { field: 'name', message: NAME_LINK_MESSAGE }
+        const msg = (message || '').trim()
+        if (msg.length > MAX_MESSAGE_LENGTH) return { field: 'message', message: TOO_LONG_MESSAGE }
+        if (containsLink(msg)) return { field: 'message', message: LINK_MESSAGE }
+        if (containsSpamTerms(msg) || containsSpamPhrase(msg)) {
+          return { field: 'message', message: SPAM_MESSAGE }
+        }
+        return null
+      }
+
+      return { screen }
+    })()
+
+    function setLabel(text) {
+      if (btnLabel) btnLabel.textContent = text
+      else if (btn) btn.textContent = text
+    }
+
+    function clearErrors() {
+      fields.concat('form').forEach((f) => {
+        const err = document.getElementById(`${f}-error`)
+        if (err) { err.classList.add('d-none'); err.textContent = '' }
+        const input = document.getElementById(f)
+        if (input) input.classList.remove('has-error')
+      })
+    }
+
+    function showError(field, message) {
+      const err = document.getElementById(`${field}-error`)
+      if (err) {
+        err.textContent = message
+        err.classList.remove('d-none')
+      }
+      const input = document.getElementById(field)
+      if (input) {
+        input.classList.add('has-error')
+        input.focus({ preventScroll: true })
+        input.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' })
+      }
+    }
+
+    fields.forEach((f) => {
+      const input = document.getElementById(f)
+      if (!input) return
+      input.addEventListener('input', () => {
+        input.classList.remove('has-error')
+        const err = document.getElementById(`${f}-error`)
+        if (err) err.classList.add('d-none')
+      })
+    })
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      clearErrors()
+
+      // Spam policy (mirrors the server). Blocks links/URLs and SEO/marketing
+      // outreach before a request is ever sent.
+      const nameVal = (document.getElementById('name') || {}).value || ''
+      const messageVal = (document.getElementById('message') || {}).value || ''
+      const violation = spamPolicy.screen(nameVal, messageVal)
+      if (violation) {
+        showError(violation.field, violation.message)
+        return
+      }
+
+      if (btn) btn.disabled = true
+      setLabel('Sending…')
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+
+        let data = {}
+        try { data = await res.json() } catch (_) { /* non-JSON response */ }
+
+        if (res.ok) {
+          form.reset()
+          if (modal) modal.open()
+        } else {
+          const field = data.field || 'form'
+          const message = data.message || 'Something went wrong. Please try again.'
+          showError(fields.includes(field) ? field : 'form', message)
+        }
+      } catch (_) {
+        showError('form', 'Network error — please check your connection and try again.')
+      } finally {
+        if (btn) btn.disabled = false
+        setLabel('Send Message')
+      }
+    })
+  })()
+
+  /* ------------------------------------------------------------------
+     Footer year
+     ------------------------------------------------------------------ */
+  ;(function footerYear() {
+    const el = document.getElementById('year')
+    if (el) el.textContent = new Date().getFullYear()
+  })()
+})()
