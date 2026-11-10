@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "django-dev-8002",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-Command", "$env:DJANGO_DEBUG='1'; $env:DJANGO_ENV='local'; ./myenv/Scripts/python.exe manage.py runserver 127.0.0.1:8002"],
+      "port": 8002
+    },
+    {
+      "name": "django-prodlike-8003",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-Command", "$env:DJANGO_ENV='local'; ./myenv/Scripts/python.exe manage.py runserver 127.0.0.1:8003"],
+      "port": 8003
+    }
+  ]
+}

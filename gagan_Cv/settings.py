@@ -29,12 +29,26 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-hyrvy8k!td4#jdig9fsnqlk(+80!-%clo*!8=e!i$mlzhb(-2q"
+# Read from the environment in production; the insecure literal is only a
+# local-dev fallback. Set a strong SECRET_KEY env var on the host (see README).
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-hyrvy8k!td4#jdig9fsnqlk(+80!-%clo*!8=e!i$mlzhb(-2q",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
 
-ALLOWED_HOSTS = ["*"]
+# Host-header allow-list. Override with a comma-separated ALLOWED_HOSTS env var
+# if the site is ever served from another domain.
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.getenv(
+        "ALLOWED_HOSTS",
+        "gagandeepsingh.in,www.gagandeepsingh.in,.vercel.app,127.0.0.1,localhost",
+    ).split(",")
+    if h.strip()
+]
 
 
 # Application definition
@@ -56,6 +70,9 @@ MIDDLEWARE = [
     # Must sit directly below SecurityMiddleware so static files are served
     # (and cached) without running the rest of the stack.
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    # Adds the CSP (nonce) + the extra hardening headers Django has no setting
+    # for. Below WhiteNoise so static assets are served without the overhead.
+    "portfolio.security.SecurityHeadersMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -212,4 +229,65 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 CONTACT_RECEIVER_EMAIL = os.getenv(
     "CONTACT_RECEIVER_EMAIL", "softwaredeveloper@gagandeepsingh.in"
 )
+
+
+# ---------------------------------------------------------------------------
+# Security
+# ---------------------------------------------------------------------------
+# "Are we on the deployed, HTTPS-fronted environment?" This gates everything
+# that only makes sense over HTTPS, so the plain-HTTP dev server never redirects
+# to https or drops Secure-only cookies. Note: DATABASE_URL is NOT a usable
+# signal here — local dev also runs against the hosted Neon database. Vercel
+# sets VERCEL=1 automatically on every deploy; set DJANGO_ENV=production on any
+# other host (and DJANGO_ENV=local to force dev behaviour anywhere).
+_DJANGO_ENV = os.getenv("DJANGO_ENV", "").strip().lower()
+if _DJANGO_ENV == "production":
+    IS_PRODUCTION = True
+elif _DJANGO_ENV in {"local", "dev", "development"}:
+    IS_PRODUCTION = False
+else:
+    IS_PRODUCTION = bool(os.getenv("VERCEL"))
+
+# Vercel/most PaaS terminate TLS at the edge and forward over HTTP with this
+# header. Without it Django thinks every request is insecure and never sends
+# HSTS or honours Secure cookies. Safe locally: the dev server never sets it.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Headers handled natively by django.middleware.security.SecurityMiddleware.
+# These are harmless on HTTP, so they can be unconditional.
+SECURE_CONTENT_TYPE_NOSNIFF = True  # X-Content-Type-Options: nosniff
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
+
+# HSTS is only ever emitted on secure responses, so enabling it unconditionally
+# is safe — the dev server (HTTP) simply never sends it. 1 year + preload.
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# These WOULD break local HTTP (redirect loops / cookies that never set), so
+# they only switch on in the deployed environment.
+SECURE_SSL_REDIRECT = IS_PRODUCTION
+SESSION_COOKIE_SECURE = IS_PRODUCTION
+CSRF_COOKIE_SECURE = IS_PRODUCTION
+
+# Cookie hardening that is safe everywhere. The contact form sends the CSRF
+# token via the hidden form field, not by reading the cookie in JS, so the
+# CSRF cookie can be HttpOnly too.
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
+# The real origin the deployed site is reached through — needed for CSRF on
+# POSTs once SECURE_SSL_REDIRECT/secure cookies are in play.
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "https://gagandeepsingh.in,https://www.gagandeepsingh.in,https://*.vercel.app",
+    ).split(",")
+    if o.strip()
+]
 

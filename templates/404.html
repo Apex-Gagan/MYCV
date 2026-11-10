@@ -4,46 +4,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>404 — Page Not Found</title>
-    <meta name="theme-color" content="#070a12" />
-    <link rel="icon" href="{% static 'assets/jpeg/gagan_professional_picture.png' %}"/>
+    <title>Page not found | Gagandeep Singh</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#1e1e1e" />
+    <link rel="icon" href="{% static 'assets/jpeg/gagan_professional_picture.png' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'css/error.css' %}" />
   </head>
   <body>
-    <div class="err-bg"></div>
-    <main class="err-wrap">
-      <div class="err-card">
-        <div class="err-glow"></div>
-        <div class="err-code">
-          <span>4</span>
-          <div class="err-orb">
-            <div class="err-orb-inner"></div>
-          </div>
-          <span>4</span>
-        </div>
-        <h1 class="err-title">Page Not Found</h1>
-        <p class="err-sub">
-          The page you’re looking for has wandered off into the void.
-          Let’s get you back on track.
-        </p>
-        <div class="err-cta">
-          <a href="/" class="err-btn err-btn--primary">Return Home</a>
-          <a href="/#contact" class="err-btn err-btn--ghost">Contact Me</a>
-        </div>
+    <div class="ambient" aria-hidden="true">
+      <span class="blob blob--a"></span>
+      <span class="blob blob--b"></span>
+    </div>
+
+    <main class="err">
+      <span class="paren">Error 404</span>
+      <h1 class="err__code">Page not<br />found.</h1>
+      <p class="err__sub">The link may be old or mistyped. Everything that is still here starts from the home page.</p>
+      <div class="err__cta">
+        <a href="/" class="btn">
+          <span class="btn__ico"><i class="fa-solid fa-arrow-right"></i></span>
+          Home
+        </a>
+        <a href="/#projects" class="btn btn--glass">
+          <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+          Projects
+        </a>
       </div>
     </main>
-    
+
     <!-- Vercel Speed Insights -->
-    <script type="module">
+    <script type="module" nonce="{{ request.csp_nonce }}">
       import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@latest/dist/index.mjs';
       injectSpeedInsights();
     </script>
-    
+
     <!-- Vercel Web Analytics -->
-    <script type="module">
+    <script type="module" nonce="{{ request.csp_nonce }}">
       import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@latest/dist/index.mjs';
       inject();
     </script>

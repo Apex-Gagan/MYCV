@@ -17,4 +17,6 @@ urlpatterns = [
         name="django.contrib.sitemaps.views.sitemap",
     ),
        path("robots.txt", Robots.as_view(), name="robots"),
+    path(".well-known/security.txt", SecurityTxt.as_view(), name="security-txt"),
+    path("security.txt", SecurityTxt.as_view(), name="security-txt-root"),
 ]
