@@ -1,335 +1,269 @@
 {% extends 'Base.html' %}
-{%load static%}
-{%block title%}Gagandeep Singh | Software Developer {%endblock%}
+{% load static %}
+{% block title %}Gagandeep Singh | Software Developer{% endblock %}
 
-{%block content%}
-    <section class="home-hero">
-      <div class="home-hero__inner">
-        <div class="home-hero__content">
-          <div class="home-hero__eyebrow">
-            <span class="eyebrow"><span class="eyebrow__dot"></span> Available for work</span>
-          </div>
+{% block content %}
+    <!-- Hero -->
+    <section class="hero" data-theme="dark" aria-labelledby="hero-title">
+      <div class="hero__ambient" aria-hidden="true">
+        <span class="hero__blob hero__blob--a"></span>
+        <span class="hero__blob hero__blob--b"></span>
+        <span class="hero__blob hero__blob--c"></span>
+      </div>
 
-          <h1 class="heading-primary">
-            Hey, I&rsquo;m <span class="accent-text">Gagandeep</span>
-          </h1>
+      <div class="container hero__grid">
+        <h1 class="display hero__title" id="hero-title">Gagandeep<br />Singh.</h1>
 
-          <p class="home-hero__role">
-            <span class="prompt">&gt;</span>
-            <span
-              class="home-hero__typed"
-              data-roles='["Backend-focused Software Developer","Django &amp; Python Engineer","REST API Architect","Full-Stack Problem Solver"]'
-            ></span>
-            <span class="home-hero__caret" aria-hidden="true"></span>
+        <div class="hero__aside" data-theme="dark">
+          <p class="two-tone">
+            Results driven software developer with 3+ years of experience specializing in full-stack development using Python, Django, Next.js, and SQL.
+            <span>Proven ability to build scalable applications and deliver efficient, clean code.</span>
           </p>
-
-          <div class="home-hero__info">
-            <p class="text-primary">
-              Results-driven software developer with 3+ years of experience specializing in
-              full-stack development using Python, Next.js, and SQL. I build scalable web
-              applications and ship efficient, clean code.
-            </p>
-          </div>
-
-          <div class="home-hero__cta">
-            <a href="#projects" class="btn btn--bg" data-magnetic>View Projects <i class="fa-solid fa-arrow-right"></i></a>
-            <a href="#contact" class="btn btn--theme-inv" data-magnetic>Hire Me</a>
-          </div>
-
-          <div class="home-hero__stats">
-            <div class="home-hero__stat">
-              <span class="home-hero__stat-num"><span data-count="3">0</span><span class="plus">+</span></span>
-              <span class="home-hero__stat-label">Years of experience</span>
-            </div>
-            <div class="home-hero__stat">
-              <span class="home-hero__stat-num"><span data-count="{{ projects|length }}">0</span><span class="plus">+</span></span>
-              <span class="home-hero__stat-label">Projects delivered</span>
-            </div>
-            <div class="home-hero__stat">
-              <span class="home-hero__stat-num"><span data-count="14">0</span><span class="plus">+</span></span>
-              <span class="home-hero__stat-label">Technologies used</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="home-hero__visual" aria-hidden="true">
-          <span class="tech-orbit tech-orbit--1"><i class="fa-brands fa-python"></i> Python</span>
-          <span class="tech-orbit tech-orbit--2"><i class="fa-brands fa-react"></i> React</span>
-          <span class="tech-orbit tech-orbit--3"><i class="fa-solid fa-database"></i> SQL</span>
-
-          <div class="code-window">
-            <div class="code-window__bar">
-              <span class="code-window__dots"><i></i><i></i><i></i></span>
-              <span class="code-window__title">developer.py</span>
-            </div>
-            <div class="code-window__body">
-<div class="code-window__row"><span class="ln">1</span><span class="kw">class</span> <span class="fn">Developer</span>:</div>
-<div class="code-window__row"><span class="ln">2</span>    name  = <span class="st">"Gagandeep Singh"</span></div>
-<div class="code-window__row"><span class="ln">3</span>    role  = <span class="st">"Software Developer"</span></div>
-<div class="code-window__row"><span class="ln">4</span>    stack = [<span class="st">"Django"</span>, <span class="st">"Next.js"</span>, <span class="st">"SQL"</span>]</div>
-<div class="code-window__row"><span class="ln">5</span>    years = <span class="nm">3</span></div>
-<div class="code-window__row"><span class="ln">6</span></div>
-<div class="code-window__row"><span class="ln">7</span>    <span class="kw">def</span> <span class="fn">build</span>(<span class="pr">self</span>, idea):</div>
-<div class="code-window__row"><span class="ln">8</span>        <span class="cm"># clean code, shipped on time</span></div>
-<div class="code-window__row"><span class="ln">9</span>        <span class="kw">return</span> idea.<span class="fn">scale</span>()</div>
-<div class="code-window__row"><span class="ln">10</span></div>
+          <hr class="hairline" />
+          <div class="hero__contact">
+            <span class="hero__contact-label">Contact:</span>
+            <div class="hero__contact-row">
+              <a class="pill" target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a>
+              <a class="pill" target="_blank" rel="noreferrer" href="https://github.com/Apex-Gagan"><i class="fa-brands fa-github"></i> GitHub</a>
+              <a class="pill" href="mailto:softwaredeveloper@gagandeepsingh.in"><i class="fa-solid fa-envelope"></i> Email</a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="home-hero__socials">
-        <div class="home-hero__social">
-          <a href="https://www.linkedin.com/in/gagandeep-singh-54a988291/" class="home-hero__social-icon-link" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-            <img
-              src="{% static 'assets/svg/linkedin-dark.svg' %}"
-              alt=""
-              class="home-hero__social-icon"
-            />
+      <div class="container hero__foot">
+        <div class="hero__cta">
+          <a href="#contact" class="btn">
+            <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+            Contact
           </a>
-        </div>
-
-        <div class="home-hero__social">
-          <a href="https://github.com/rajputgagandeep557-cyber"
-          class="home-hero__social-icon-link" target="_blank" rel="noreferrer" aria-label="GitHub">
-            <img
-              src="{% static 'assets/svg/github-dark.svg' %}"
-              alt=""
-              class="home-hero__social-icon"
-            />
-          </a>
-        </div>
-
-        <div class="home-hero__social">
           <a
             href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"
-            class="home-hero__social-icon-link home-hero__social-icon-link--bd-none"
+            class="btn btn--glass"
             target="_blank"
             rel="noreferrer"
-            aria-label="Résumé"
           >
-            <img
-              src="{% static 'assets/svg/book-dark.svg' %}"
-              alt=""
-              class="home-hero__social-icon"
-            />
+            <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+            Download CV
           </a>
         </div>
-      </div>
-
-      <div class="home-hero__mouse-scroll-cont">
-        <div class="mouse"></div>
+        <a href="#projects" class="paren-link">
+          <span class="paren">Projects</span>
+          <i class="fa-solid fa-arrow-right fa-ne"></i>
+        </a>
       </div>
     </section>
 
-    <section id="about" class="about sec-pad">
-      <div class="main-container">
-        <h2 class="heading heading-sec heading-sec__mb-med" data-reveal>
-          <span class="heading-sec__main">About Me</span>
-          <span class="heading-sec__sub">
-            Here you will find more information about me, what I do, and my current skills
-            &mdash; mostly in terms of programming and technology.
-          </span>
-        </h2>
-        <div class="about__content">
-          <div class="about__content-main" data-reveal>
-            <h3 class="about__content-title">Get to know me!</h3>
-            <div class="about__content-details">
-              <p class="about__content-details-para">
-                I’m an experienced software developer with hands-on expertise in <strong>Python, Django, JavaScript, React, Next.js, SQL, HTML/CSS, and AJAX</strong>. Over the years, I’ve built a reputation for crafting reliable, user-focused digital solutions that not only work seamlessly but also make an impact.<br/><br/>
-                What drives me is more than just writing clean code—it’s the excitement of turning ideas into reality, solving challenging problems, and delivering results that help businesses and people grow. I enjoy working in collaborative teams, learning from others, and staying ahead of the curve with emerging technologies.<br/><br/>
-                Whether it’s optimizing a database, designing an intuitive frontend, or brainstorming innovative solutions, I thrive on bringing creativity and precision together.
-              </p>
-              <div class="exp my-2">
-                <span class="icon"></span>
-                <div class="exp-content">
-                  <p class="designation"><strong>Available for freelancing projects</strong></p>
-                </div>
-              </div>
-            </div>
-            <a target="_blank" rel="noreferrer" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing" class="btn btn--med btn--theme dynamicBgClr">View CV <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          </div>
+    <!-- Tools -->
+    <section class="stack" data-theme="light" aria-label="Tools">
+      <div class="container">
+        <div class="stack__label" data-reveal>
+          <span class="paren">Tools I work with</span>
+        </div>
 
-          <div class="about__content-skills" data-reveal>
-            <h3 class="about__content-title">My Skills</h3>
-            <div class="skills">
-              <div class="skills__skill">Python</div>
-              <div class="skills__skill">Django</div>
-              <div class="skills__skill">JavaScript</div>
-              <div class="skills__skill">React</div>
-              <div class="skills__skill">Next.js</div>
-              <div class="skills__skill">HTML, CSS</div>
-              <div class="skills__skill">Docker &amp; AWS</div>
-              <div class="skills__skill">Tailwind</div>
-              <div class="skills__skill">SQL</div>
-              <div class="skills__skill">Data Analysis</div>
-              <div class="skills__skill">REST API</div>
-              <div class="skills__skill">Version Control</div>
-              <div class="skills__skill">Salesforce Administration</div>
-              <div class="skills__skill">Applied AI Development</div>
-            </div>
+        <div class="fan" data-reveal>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/python/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>Python</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/django/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>Django</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/postgresql/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>PostgreSQL</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/javascript/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>JavaScript</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/react/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>React</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/nextdotjs/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>Next.js</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/docker/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>Docker</span></div>
+          <div class="fan__card"><img src="https://cdn.simpleicons.org/tailwindcss/1E1E1E" alt="" width="40" height="40" loading="lazy" /><span>Tailwind</span></div>
+        </div>
 
-            <h3 class="about__content-title mt-5">Work Experience</h3>
-            <div class="exp-list">
-              {% for exp in experiences %}
-              <div class="exp my-2">
-                <span class="icon"></span>
-                <div class="exp-content">
-                  <p class="designation"><strong>{{ exp.designation }}</strong></p>
-                  <p class="company">{{ exp.company }}</p>
-                  <small class="duration">{{ exp.start_date|date:"M Y" }} &ndash; {% if exp.end_date %}{{ exp.end_date|date:"M Y" }}{% else %}Present{% endif %}</small>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
+        <div class="stack__statement" data-reveal>
+          <p class="two-tone">
+            I start with the data model, then the API, then the interface.
+            <span>A clean schema and predictable endpoints are what keep a product cheap to change a year later.</span>
+          </p>
         </div>
       </div>
     </section>
 
-    <section id="projects" class="projects sec-pad">
-      <div class="main-container">
-        <h2 class="heading heading-sec heading-sec__mb-bg" data-reveal>
-          <span class="heading-sec__main">Projects</span>
-          <span class="heading-sec__sub">
-            Here you will find some of the projects that I created, with each one containing
-            its own case study.
-          </span>
-        </h2>
-
-        <div class="projects__content" data-reveal>
-          <div class="projects__slider" id="projectsSlider">
-            <div class="projects__track" id="projectsTrack">
-              {% for project in projects %}
-              <article class="projects__card">
-                <div class="projects__card-img-cont">
-                  <img
-                    src="{{ project.image_url }}"
-                    alt="{{ project.title }} screenshot"
-                    class="projects__card-img"
-                    loading="lazy"
-                  />
-                </div>
-                <div class="projects__card-body">
-                  <span class="projects__card-index">PROJECT {{ forloop.counter|stringformat:"02d" }}</span>
-                  <h3 class="projects__card-title">{{ project.title }}</h3>
-                  <p class="projects__card-desc">
-                    {{ project.short_description|safe }}
-                  </p>
-                  <div class="projects__card-tags">
-                    {% for tool in project.tool_list|slice:":4" %}
-                    <span class="projects__card-tag">{{ tool }}</span>
-                    {% endfor %}
-                  </div>
-                  <div class="projects__card-actions">
-                    <a
-                      href="{% url 'project' project.slug %}"
-                      class="btn btn--med btn--theme dynamicBgClr"
-                      target="_blank"
-                      >Case Study <i class="fa-solid fa-arrow-right"></i></a
-                    >
-                    {% if project.live_link %}
-                    <a
-                      href="{{ project.live_link }}"
-                      class="btn btn--med btn--theme-inv"
-                      target="_blank"
-                      rel="noreferrer"
-                      >Live Site</a
-                    >
-                    {% endif %}
-                  </div>
-                </div>
-              </article>
-              {% endfor %}
-            </div>
-          </div>
-
-          <div class="projects__nav" id="projectsNav">
-            <button type="button" class="projects__nav-btn" id="projectsPrev" aria-label="Previous projects">
-              <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <div class="projects__dots" id="projectsDots"></div>
-            <span class="projects__counter" id="projectsCounter">01 / 01</span>
-            <button type="button" class="projects__nav-btn" id="projectsNext" aria-label="Next projects">
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
+    <!-- Projects -->
+    <section id="projects" class="work" data-theme="dark" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2" id="projects-title">Projects</h2>
+          <span class="paren">{{ projects|length|stringformat:"02d" }} case studies</span>
         </div>
 
+        <div
+          class="work__list"
+          style="timeline-scope: {% for project in projects %}--card-{{ forloop.counter }}{% if not forloop.last %}, {% endif %}{% endfor %};"
+        >
+          {% for project in projects %}
+          <article
+            class="stackcard"
+            {% if not forloop.last %}data-next{% endif %}
+            style="--i: {{ forloop.counter0 }}; view-timeline-name: --card-{{ forloop.counter }};{% if not forloop.last %} animation-timeline: --card-{{ forloop.counter|add:1 }};{% endif %}"
+          >
+            <a href="{% url 'project' project.slug %}" class="stackcard__link" aria-label="{{ project.title }}, read the case study">
+              <div class="stackcard__body">
+                <span class="stackcard__num">({{ forloop.counter|stringformat:"02d" }})</span>
+                <h3 class="stackcard__title">{{ project.title }}</h3>
+                <span class="stackcard__arrow" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+                <hr class="stackcard__rule" />
+                <p class="stackcard__desc">{{ project.short_description|striptags|truncatewords:26 }}</p>
+                <div class="chips stackcard__chips">
+                  {% for tool in project.tool_list|slice:":4" %}
+                  <span class="chip">{{ tool }}</span>
+                  {% endfor %}
+                </div>
+                <span class="btn stackcard__btn" aria-hidden="true">
+                  <span class="btn__ico btn__ico--right"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></span>
+                  View project
+                </span>
+              </div>
+              <div class="stackcard__media">
+                <img
+                  src="{{ project.image_url }}"
+                  alt="{{ project.title }} screenshot"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                />
+              </div>
+            </a>
+          </article>
+          {% endfor %}
+        </div>
       </div>
     </section>
 
-     <section id="contact" class="contact sec-pad dynamicBg">
-      <div class="main-container">
-        <h2 class="heading heading-sec heading-sec__mb-med" data-reveal>
-          <span class="heading-sec__main heading-sec__main--lt">Contact</span>
-          <span class="heading-sec__sub heading-sec__sub--lt">
-            Feel free to contact me by submitting the form below and I will get back to you
-            as soon as possible.
-          </span>
-        </h2>
-        <div class="contact__form-container" data-reveal>
-          <form action="{% url 'home' %}" method="post" class="contact__form" id="contactForm" novalidate>
-            {% csrf_token %}
-            <div class="contact__form-field">
-              <label class="contact__form-label" for="name">Name</label>
-              <input
-                required
-                placeholder="Enter your name"
-                type="text"
-                class="contact__form-input"
-                name="name"
-                id="name"
-                autocomplete="name"
-              />
-               <p id="name-error" class="d-none"></p>
-            </div>
-            <div class="contact__form-field">
-              <label class="contact__form-label" for="email">Email</label>
-              <input
-                required
-                placeholder="Enter your email"
-                type="email"
-                class="contact__form-input"
-                name="email"
-                id="email"
-                autocomplete="email"
-              />
-              <p id="email-error" class="d-none"></p>
-            </div>
-            <div class="contact__form-field">
-              <label class="contact__form-label" for="message">Message</label>
-              <textarea
-                required
-                cols="30"
-                rows="10"
-                class="contact__form-input"
-                placeholder="Tell me about your project…"
-                name="message"
-                id="message"
-              ></textarea>
-               <p id="message-error" class="d-none"></p>
-            </div>
-            <p id="form-error" class="d-none"></p>
-            <button type="submit" class="btn btn--theme contact__btn" id="cbtn">
-              <span class="btn__label">Send Message</span>
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
-            <p class="contact__note">
-              <i class="fa-solid fa-shield-halved"></i>
-              Your message is emailed straight to me &mdash; nothing is stored on this site.
+    <!-- About -->
+    <section id="about" class="about" data-theme="light" aria-labelledby="about-title">
+      <div class="container">
+        <div class="about__head" data-reveal>
+          <span class="eyebrow">About me</span>
+          <h2 class="h2 h2--xl" id="about-title">Three years of shipping production software.</h2>
+        </div>
+
+        <div class="about__grid">
+          <div class="about__media mosaic" data-reveal>
+            {% for project in projects|slice:":3" %}
+            <img src="{{ project.image_url }}" alt="" loading="lazy" class="mosaic__img mosaic__img--{{ forloop.counter }}" />
+            {% endfor %}
+          </div>
+
+          <div class="about__text" data-reveal data-delay=".1s">
+            <p class="two-tone">
+              I build the parts of a product that have to keep working: schemas, REST APIs, background jobs and the dashboards on top of them.
+              <span>Python and Django are my core stack, PostgreSQL is my default database, and I reach for React or Next.js when the interface calls for it.</span>
             </p>
-          </form>
+
+            <hr class="hairline" />
+
+            <div class="facts">
+              <div class="fact">
+                <span class="fact__num">3+</span>
+                <span class="fact__label">Years of experience</span>
+              </div>
+              <div class="fact">
+                <span class="fact__num">{{ projects|length }}</span>
+                <span class="fact__label">Projects shipped</span>
+              </div>
+              <div class="fact">
+                <span class="fact__num">3</span>
+                <span class="fact__label">Countries served</span>
+              </div>
+            </div>
+
+            <div class="about__skills">
+              <span class="about__skills-label">Skills</span>
+              <div class="chips">
+                <span class="chip">Python</span>
+                <span class="chip">Django</span>
+                <span class="chip">REST APIs</span>
+                <span class="chip">SQL</span>
+                <span class="chip">PostgreSQL</span>
+                <span class="chip">JavaScript</span>
+                <span class="chip">React</span>
+                <span class="chip">Next.js</span>
+                <span class="chip">HTML &amp; CSS</span>
+                <span class="chip">Tailwind</span>
+                <span class="chip">Docker &amp; AWS</span>
+                <span class="chip">Git</span>
+                <span class="chip">Data analysis</span>
+                <span class="chip">Salesforce administration</span>
+                <span class="chip">Applied AI development</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <div id="myModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-content">
-        <div class="modal-content__icon"><i class="fa-solid fa-check"></i></div>
-        <h3 id="modalTitle">Message sent!</h3>
-        <p>Thanks for reaching out — your message landed in my inbox and I&rsquo;ll get back to you as soon as possible.</p>
-        <button type="button" class="btn-success" data-modal-close>Got it</button>
+    <!-- Experience -->
+    <section id="experience" class="exp" data-theme="light" aria-labelledby="experience-title">
+      <div class="container">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2" id="experience-title">Experience</h2>
+          <span class="paren">{{ experiences|length|stringformat:"02d" }} roles</span>
+        </div>
+
+        <ol class="exp__list">
+          {% for exp in experiences %}
+          <li class="exp__row" data-reveal>
+            <span class="paren exp__dates">{{ exp.start_date|date:"M Y" }} - {% if exp.end_date %}{{ exp.end_date|date:"M Y" }}{% else %}Present{% endif %}</span>
+            <h3 class="h3">{{ exp.designation }}{% if not exp.end_date %}<span class="pill pill--current">Current</span>{% endif %}</h3>
+            <p class="exp__company">{{ exp.company }}</p>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact" data-theme="dark" aria-labelledby="contact-title">
+      <div class="container contact__grid">
+        <div class="contact__intro" data-reveal>
+          <span class="eyebrow">Contact</span>
+          <h2 class="h2 h2--xl" id="contact-title">Tell me about the project.</h2>
+          <p class="lead">
+            Freelance projects and full-time roles are both welcome. Prefer email? Write to
+            <a href="mailto:softwaredeveloper@gagandeepsingh.in">softwaredeveloper@gagandeepsingh.in</a>.
+          </p>
+          <div class="contact__socials">
+            <a class="pill" target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a>
+            <a class="pill" target="_blank" rel="noreferrer" href="https://github.com/Apex-Gagan"><i class="fa-brands fa-github"></i> GitHub</a>
+          </div>
+        </div>
+
+        <form action="{% url 'home' %}" method="post" class="form" id="contactForm" novalidate data-reveal data-delay=".1s">
+          {% csrf_token %}
+          <div class="field">
+            <label for="name">Name</label>
+            <input required type="text" name="name" id="name" autocomplete="name" placeholder="Your name" />
+            <p id="name-error" class="field__error d-none" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input required type="email" name="email" id="email" autocomplete="email" placeholder="you@company.com" />
+            <p id="email-error" class="field__error d-none" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea required name="message" id="message" rows="6" placeholder="What are you building, and when do you need it?"></textarea>
+            <p id="message-error" class="field__error d-none" role="alert"></p>
+          </div>
+          <p id="form-error" class="form__error d-none" role="alert"></p>
+          <div class="form__foot">
+            <button type="submit" class="btn" id="cbtn">
+              <span class="btn__ico btn__ico--right"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></span>
+              <span class="btn__label">Send message</span>
+            </button>
+            <p class="form__note">Your message is emailed to me. Nothing is stored on this site.</p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div id="myModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+      <div class="modal__card">
+        <div class="modal__check"><i class="fa-solid fa-check"></i></div>
+        <h3 id="modalTitle">Message sent</h3>
+        <p>Thanks for reaching out. Your message is in my inbox and I will reply as soon as I can.</p>
+        <button type="button" class="btn btn--white btn--plain" data-modal-close>Got it</button>
       </div>
     </div>
- {%endblock%}
+{% endblock %}

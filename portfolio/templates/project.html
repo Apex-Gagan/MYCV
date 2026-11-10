@@ -1,78 +1,83 @@
 {% extends 'Base.html' %}
-{%load static%}
-{%block title%}{{project.title}}{%endblock%}
-{%block desc%}{{project.short_description}}{%endblock%}
-{%block meta%}
-<meta name="description" content="{{project.short_description}}" />
-<meta property="og:title" content="{{project.title}}">
-<meta property="og:site_name" content="Gagandeep Singh Portfolio">
-<meta property="og:url" content="https://www.gagandeepsingh.in/project/{{project.slug}}">
-<meta property="og:description" content="{{project.short_description}}">
-<meta property="og:type" content="">
-<meta property="og:image" content="{{ og_image }}">
-{%endblock%}
-{%block content%}
-    <section class="project-cs-hero">
-      <div class="project-cs-hero__content">
-        <div class="home-hero__eyebrow">
-          <span class="eyebrow"><span class="eyebrow__dot"></span> Case Study</span>
-        </div>
-        <h1 class="heading-primary">{{project.title}}</h1>
-        <div class="project-cs-hero__info">
-          <p class="text-primary">
-          {{project.short_description}}
-          </p>
-        </div>
-        <div class="project-cs-hero__cta">
-          <a href="{{project.live_link}}" class="btn btn--bg" target="_blank" rel="noreferrer" data-magnetic>Live Link <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          <a href="/#projects" class="btn btn--theme-inv" data-magnetic>All Projects</a>
+{% load static %}
+{% block title %}{{ project.title }} | Gagandeep Singh{% endblock %}
+{% block canonical %}https://www.gagandeepsingh.in/project/{{ project.slug }}{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ project.short_description|striptags|truncatewords:30 }}" />
+<meta property="og:title" content="{{ project.title }}" />
+<meta property="og:site_name" content="Gagandeep Singh Portfolio" />
+<meta property="og:url" content="https://www.gagandeepsingh.in/project/{{ project.slug }}" />
+<meta property="og:description" content="{{ project.short_description|striptags|truncatewords:30 }}" />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="{{ og_image }}" />
+{% endblock %}
+
+{% block content %}
+    <section class="cs-hero" data-theme="dark" aria-labelledby="cs-title">
+      <div class="hero__ambient" aria-hidden="true">
+        <span class="hero__blob hero__blob--a"></span>
+        <span class="hero__blob hero__blob--b"></span>
+      </div>
+
+      <div class="container cs-hero__inner">
+        <span class="paren">Case study</span>
+        <h1 class="cs-hero__title" id="cs-title">{{ project.title }}</h1>
+        <p class="two-tone">{{ project.short_description|striptags }}</p>
+        <div class="cs-hero__cta">
+          {% if project.live_link %}
+          <a href="{{ project.live_link }}" class="btn" target="_blank" rel="noreferrer">
+            <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+            Live site
+          </a>
+          {% endif %}
+          <a href="/#projects" class="btn btn--glass">
+            <span class="btn__ico btn__ico--right"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></span>
+            Projects
+          </a>
         </div>
       </div>
     </section>
-    <section class="project-details">
-      <div class="main-container">
-        <div class="project-details__content">
-          <div class="project-details__showcase-img-cont" data-reveal>
-            <img
-              src="{{ project.image_url }}"
-              alt="{{ project.title }}"
-              class="project-details__showcase-img"
-            />
-          </div>
-          <div class="project-details__content-main">
-            <div class="project-details__desc" data-reveal>
-              <h3 class="project-details__content-title">Project Overview</h3>
-              <div class="project-details__desc-para">
-                {{project.long_description | safe}}
-              </div>
-            </div>
-            <div data-reveal>
-              <div class="project-details__tools-used">
-                <h3 class="project-details__content-title">Tools Used</h3>
-                <div class="skills">
-                  {% for skill in skills%}
-                  <div class="skills__skill">{{skill}}</div>
-                {%endfor%}
-                </div>
-              </div>
-              <div class="project-details__links">
-                <h3 class="project-details__content-title">See Live</h3>
-                <a
-                  href="{{project.live_link}}"
-                  class="btn btn--med btn--theme project-details__links-btn"
-                  target="_blank"
-                  rel="noreferrer"
-                  >Live Link <i class="fa-solid fa-arrow-up-right-from-square"></i></a
-                >
-                <a
-                  href="/#contact"
-                  class="btn btn--med btn--theme-inv project-details__links-btn"
-                  >Start a Project</a
-                >
-              </div>
+
+    <section class="cs-body" data-theme="light">
+      <div class="container">
+        <div class="cs-body__media">
+          <img src="{{ project.image_url }}" alt="{{ project.title }} screenshot" />
+        </div>
+
+        <div class="cs-body__grid">
+          <div class="cs-body__text" data-reveal>
+            <h2 class="h2">Overview</h2>
+            <div class="prose">
+              {{ project.long_description|safe }}
             </div>
           </div>
+
+          <aside class="cs-aside" data-reveal data-delay=".1s">
+            <div class="cs-aside__block">
+              <h3 class="h3">Stack</h3>
+              <div class="chips">
+                {% for skill in skills %}
+                <span class="chip">{{ skill }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="cs-aside__block">
+              <h3 class="h3">Links</h3>
+              <div class="cs-aside__links">
+                {% if project.live_link %}
+                <a href="{{ project.live_link }}" class="btn btn--ink" target="_blank" rel="noreferrer">
+                  <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+                  Live site
+                </a>
+                {% endif %}
+                <a href="/#contact" class="btn btn--glass">
+                  <span class="btn__ico btn__ico--right"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></span>
+                  Contact
+                </a>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
-   {%endblock%}
+{% endblock %}

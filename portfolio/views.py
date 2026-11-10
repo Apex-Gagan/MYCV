@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -22,7 +24,8 @@ class Home(View):
     def get(self, request):
         try:
             projects = Project.objects.all()
-            experiences = Experience.objects.all()
+            # Newest role first for the experience list.
+            experiences = Experience.objects.all().order_by("-start_date")
 
             data = {"projects": projects, "experiences": experiences}
 
@@ -113,3 +116,23 @@ class Robots(View):
         )
 
         return HttpResponse(content, content_type="text/plain")
+
+
+class SecurityTxt(View):
+    """RFC 9116 security.txt — where to report a vulnerability.
+
+    Expires is generated one year out on every request so the file never goes
+    stale (RFC 9116 requires a future Expires date).
+    """
+
+    def get(self, request):
+        expires = (datetime.now(timezone.utc) + timedelta(days=365)).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        content = (
+            "Contact: mailto:softwaredeveloper@gagandeepsingh.in\n"
+            f"Expires: {expires}\n"
+            "Preferred-Languages: en\n"
+            "Canonical: https://www.gagandeepsingh.in/.well-known/security.txt\n"
+        )
+        return HttpResponse(content, content_type="text/plain; charset=utf-8")

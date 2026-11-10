@@ -4,212 +4,179 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta name="theme-color" content="#070a12" />
-    <title>{% block title %} {%endblock%}</title>
-    <link rel="canonical" href="http://www.gagandeepsingh.in/"/>
+    <meta name="theme-color" content="#1e1e1e" />
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="canonical" href="{% block canonical %}https://www.gagandeepsingh.in/{% endblock %}" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;1,500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <link rel="icon" href="{%static 'assets/jpeg/gagan_professional_picture.png' %}"/>
-<meta name="google-site-verification" content="WcOIiEHMua5lLwE7WO7YSUIkRdTpD70fj1vbLHHmbNI" />
-      <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MB8BZBDW');</script>
-<!-- End Google Tag Manager -->
-        {%block meta%}
-    <meta name="description" content="Results driven software developer with 3+ years of experience
-specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
-efficient, clean code." />
+    <link rel="icon" href="{% static 'assets/jpeg/gagan_professional_picture.png' %}" />
+    <meta name="google-site-verification" content="WcOIiEHMua5lLwE7WO7YSUIkRdTpD70fj1vbLHHmbNI" />
 
-<meta property="og:title" content="Gagandeep Singh | Software Developer">
-<meta property="og:site_name" content="Gagandeep Singh Portfolio">
-<meta property="og:url" content="https://www.gagandeepsingh.in/">
-<meta property="og:description" content="Results driven software developer with 3+ years of experience
-specializing in full-stack development using Python,Next.js, and SQL. Proven ability to build scalable web applications and deliver
-efficient, clean code.">
-<meta property="og:type" content="">
-<meta property="og:image" content="https://i.postimg.cc/gkxrBqxk/gagan-professional-picture.png">
-{%endblock%}
+    <!-- Google Tag Manager -->
+    <script nonce="{{ request.csp_nonce }}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MB8BZBDW');</script>
+    <!-- End Google Tag Manager -->
 
+    {% block meta %}
+    <meta name="description" content="Backend-focused software developer with 3+ years of experience building Django applications, REST APIs and database-driven systems in Python, SQL and Next.js." />
+    <meta property="og:title" content="Gagandeep Singh | Software Developer" />
+    <meta property="og:site_name" content="Gagandeep Singh Portfolio" />
+    <meta property="og:url" content="https://www.gagandeepsingh.in/" />
+    <meta property="og:description" content="Backend-focused software developer with 3+ years of experience building Django applications, REST APIs and database-driven systems in Python, SQL and Next.js." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://i.postimg.cc/gkxrBqxk/gagan-professional-picture.png" />
+    {% endblock %}
   </head>
   <body>
-      <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MB8BZBDW"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MB8BZBDW"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
-    <div class="scroll-progress" aria-hidden="true"></div>
-    <div class="cursor-glow" aria-hidden="true"></div>
+    <div id="top-sentinel" aria-hidden="true" style="position:absolute;top:0;left:0;width:1px;height:1px;"></div>
 
-    <header class="header">
-      <div class="header__content">
-        <div class="header__logo-container" role="link" tabindex="0" aria-label="Go to homepage">
-          <div class="header__logo-img-cont">
+    <header class="nav" id="siteNav">
+      <div class="container">
+        <div class="nav__bar">
+          <a href="/" class="nav__brand" aria-label="Gagandeep Singh, home">
             <img
               src="{% static 'assets/jpeg/gagan_professional_picture.png' %}"
-              alt="Gagandeep Singh"
-              class="header__logo-img"
+              alt=""
+              width="36"
+              height="36"
+              class="nav__avatar"
             />
-          </div>
-          <span class="header__logo-sub">Gagandeep Singh</span>
-        </div>
-        <div class="header__main">
-          <ul class="header__links">
-            <li class="header__link-wrapper">
-              <a href="/" class="header__link"> Home </a>
-            </li>
-            <li class="header__link-wrapper">
-              <a href="/#about" class="header__link">About</a>
-            </li>
-            <li class="header__link-wrapper">
-              <a href="/#projects" class="header__link">Projects</a>
-            </li>
-             <li class="header__link-wrapper">
-              <a class="header__link" target="_blank" rel="noreferrer" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">View CV</a>
-            </li>
-            <li class="header__link-wrapper">
-              <a href="/#contact" class="header__link"> Contact </a>
-            </li>
-          </ul>
+            <span>Gagandeep Singh</span>
+          </a>
+
+          <nav class="nav__links" aria-label="Primary">
+            <a href="/" class="nav__link">Home</a>
+            <a href="/#about" class="nav__link">About</a>
+            <a href="/#projects" class="nav__link">Projects</a>
+            <a href="/#experience" class="nav__link">Experience</a>
+            <a href="/#contact" class="nav__link">Contact</a>
+          </nav>
+
+          <a
+            class="btn nav__cta"
+            href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+            Download CV
+          </a>
+
           <button
             type="button"
-            class="header__main-ham-menu-cont"
-            aria-label="Open navigation menu"
+            class="icon-btn nav__toggle"
+            aria-label="Open menu"
             aria-expanded="false"
-            aria-controls="smMenu"
+            aria-controls="menu"
           >
-            <span class="ham-bars" aria-hidden="true">
-              <span></span><span></span><span></span>
-            </span>
+            <i class="fa-solid fa-bars"></i>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- Kept OUTSIDE <header> so the header's backdrop-filter does not create a
-         containing block that would clip this fixed overlay. -->
-    <div class="header__sm-menu" id="smMenu" aria-hidden="true">
-      <!-- Sits directly over the hamburger's position. The header itself is
-           painted below this overlay, so its own button is not tappable here. -->
-      <button
-        type="button"
-        class="header__sm-menu-close"
-        data-menu-close
-        aria-label="Close navigation menu"
-      >
-        <span class="sm-close-x" aria-hidden="true"><span></span><span></span></span>
-        <span class="header__sm-menu-close-label">Close</span>
+    <div class="menu" id="menu" aria-hidden="true">
+      <button type="button" class="icon-btn menu__close" data-menu-close aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <div class="header__sm-menu-content">
-        <ul class="header__sm-menu-links">
-          <li class="header__sm-menu-link">
-            <a href="/" data-num="01">Home <i class="fa-solid fa-arrow-right"></i></a>
-          </li>
+      <nav class="menu__links" aria-label="Mobile">
+        <a href="/">Home <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="/#about">About <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="/#projects">Projects <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="/#experience">Experience <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="/#contact">Contact <i class="fa-solid fa-arrow-right"></i></a>
+      </nav>
 
-          <li class="header__sm-menu-link">
-            <a href="/#about" data-num="02">About <i class="fa-solid fa-arrow-right"></i></a>
-          </li>
-
-          <li class="header__sm-menu-link">
-            <a href="/#projects" data-num="03">Projects <i class="fa-solid fa-arrow-right"></i></a>
-          </li>
-          <li class="header__sm-menu-link">
-            <a href="/#contact" data-num="04">Contact <i class="fa-solid fa-arrow-right"></i></a>
-          </li>
-
-           <li class="header__sm-menu-link">
-            <a target="_blank" rel="noreferrer" data-num="05" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">View CV <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          </li>
-        </ul>
-
-        <div class="header__sm-menu-footer">
-          <p>Available for<br/>freelance work</p>
-          <div class="header__sm-menu-socials">
-            <a target="_blank" rel="noreferrer" aria-label="LinkedIn" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/"><i class="fa-brands fa-linkedin-in"></i></a>
-            <a target="_blank" rel="noreferrer" aria-label="GitHub" href="https://github.com/Apex-Gagan"><i class="fa-brands fa-github"></i></a>
-            <a href="/#contact" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-          </div>
+      <div class="menu__foot">
+        <a
+          class="btn"
+          href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
+          Download CV
+        </a>
+        <div class="menu__socials">
+          <a class="icon-btn" target="_blank" rel="noreferrer" aria-label="LinkedIn" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a class="icon-btn" target="_blank" rel="noreferrer" aria-label="GitHub" href="https://github.com/Apex-Gagan"><i class="fa-brands fa-github"></i></a>
         </div>
       </div>
     </div>
 
-    {%block content%}{%endblock%}
+    <main id="main">
+      {% block content %}{% endblock %}
+    </main>
 
-       <footer class="main-footer">
-      <div class="main-container">
-        <div class="main-footer__upper">
-          <div class="main-footer__row main-footer__row-1">
-            <h2 class="heading heading-sm main-footer__heading-sm">
-              <span>Social</span>
-            </h2>
-            <div class="main-footer__social-cont">
-              <a target="_blank" rel="noreferrer" aria-label="LinkedIn" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/">
-                <img
-                  class="main-footer__icon"
-                  src="{% static 'assets/png/linkedin-ico.png' %}"
-                  alt=""
-                />
-              </a>
-              <a target="_blank" rel="noreferrer" aria-label="GitHub" href="https://github.com/Apex-Gagan">
-                <img
-                  class="main-footer__icon"
-                  src="{% static 'assets/png/github-ico.png' %}"
-                  alt=""
-                />
-              </a>
-
-
-              <a target="_blank" rel="noreferrer" aria-label="Résumé" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">
-                <img
-                  class="main-footer__icon main-footer__icon--mr-none"
-                  src="{% static 'assets/svg/book-light.svg' %}"
-                  alt=""
-                />
-              </a>
-            </div>
+    <footer class="footer" data-theme="dark">
+      <div class="container">
+        <div class="footer__cols">
+          <div class="footer__col">
+            <span class="paren">Pages</span>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/#about">About</a></li>
+              <li><a href="/#projects">Projects</a></li>
+              <li><a href="/#experience">Experience</a></li>
+              <li><a href="/#contact">Contact</a></li>
+            </ul>
           </div>
-          <div class="main-footer__row main-footer__row-2">
-            <h4 class="heading heading-sm text-lt">Gagandeep Singh</h4>
-            <p class="main-footer__short-desc">
-         Backend-focused Software Developer with 3+ years of experience designing RESTful APIs, database-driven systems, and scalable server-side applications using Python, Django, SQL, and Docker. Experienced in integrating frontend frameworks where required, with primary strength in backend architecture and data handling
-            </p>
+          <div class="footer__col">
+            <span class="paren">Social</span>
+            <ul>
+              <li><a target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/gagandeep-singh-54a988291/">LinkedIn</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://github.com/Apex-Gagan">GitHub</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <span class="paren">Contact</span>
+            <ul>
+              <li><a href="mailto:softwaredeveloper@gagandeepsingh.in">softwaredeveloper@gagandeepsingh.in</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://drive.google.com/file/d/1G7vR_a0GQOMkGiDJQiTiNevoTSyKm5yG/view?usp=sharing">Download CV</a></li>
+            </ul>
           </div>
         </div>
-<div class="main-footer__lower">
-          © Copyright <span id="year">2026</span>. Made by
-          <a rel="noreferrer" href="/">Gagandeep Singh</a>
-        </div>
 
+        <div class="footer__bar">
+          <a href="/" class="nav__brand">
+            <img src="{% static 'assets/jpeg/gagan_professional_picture.png' %}" alt="" width="36" height="36" class="nav__avatar" />
+            <span>Gagandeep Singh</span>
+          </a>
+          <p class="footer__copy">Copyright <span id="year">2026</span> made by <a href="/">Gagandeep Singh</a></p>
+          <button type="button" class="icon-btn" data-to-top aria-label="Back to top">
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
       </div>
     </footer>
 
-    <button type="button" class="to-top" aria-label="Back to top">
-      <i class="fa-solid fa-arrow-up"></i>
-    </button>
+    <script src="{% static 'js/index.js' %}" defer nonce="{{ request.csp_nonce }}"></script>
+    {% block script %}{% endblock %}
 
-    <script src="{% static 'js/index.js' %}" defer></script>
-    {%block script%}
-    {%endblock%}
-    
     <!-- Vercel Speed Insights -->
-    <script type="module">
+    <script type="module" nonce="{{ request.csp_nonce }}">
       import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@latest/dist/index.mjs';
       injectSpeedInsights();
     </script>
-    
+
     <!-- Vercel Web Analytics -->
-    <script type="module">
+    <script type="module" nonce="{{ request.csp_nonce }}">
       import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@latest/dist/index.mjs';
       inject();
     </script>

@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Gagandeep Singh — Portfolio interactions
-   Vanilla JS, no dependencies.
+   Gagandeep Singh / Portfolio interactions
+   Vanilla JS, no dependencies. Scroll state comes from IntersectionObserver,
+   never from a scroll listener.
    ========================================================================== */
 ;(function () {
   'use strict'
@@ -8,295 +9,88 @@
   const $ = (sel, root) => (root || document).querySelector(sel)
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel))
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const hasIO = 'IntersectionObserver' in window
 
   /* ------------------------------------------------------------------
-     Mobile menu — smooth open/close with scroll lock and focus return
+     Nav: shadow once the page has scrolled (sentinel at the very top)
+     ------------------------------------------------------------------ */
+  ;(function navState() {
+    const nav = $('#siteNav')
+    const sentinel = $('#top-sentinel')
+    if (!nav || !sentinel || !hasIO) return
+    const io = new IntersectionObserver(([entry]) => {
+      nav.classList.toggle('nav--scrolled', !entry.isIntersecting)
+    })
+    io.observe(sentinel)
+  })()
+
+  /* ------------------------------------------------------------------
+     Mobile menu
      ------------------------------------------------------------------ */
   ;(function mobileMenu() {
-    const btn = $('.header__main-ham-menu-cont')
-    const menu = $('.header__sm-menu')
+    const btn = $('.nav__toggle')
+    const menu = $('#menu')
     if (!btn || !menu) return
 
-    const links = $$('.header__sm-menu-link a', menu)
     let isOpen = false
-    let scrollY = 0
 
     function open() {
       if (isOpen) return
       isOpen = true
-      scrollY = window.scrollY
-      menu.classList.add('header__sm-menu--active')
-      btn.classList.add('is-active')
-      btn.setAttribute('aria-expanded', 'true')
+      menu.classList.add('is-open')
       menu.setAttribute('aria-hidden', 'false')
+      btn.setAttribute('aria-expanded', 'true')
       document.body.classList.add('menu-open')
-      // Preserve scroll position while the body is locked.
-      document.body.style.top = `-${scrollY}px`
-      document.body.style.position = 'fixed'
-      document.body.style.width = '100%'
+      const first = $('a, button', menu)
+      if (first) first.focus({ preventScroll: true })
     }
 
-    function close() {
+    function close(returnFocus) {
       if (!isOpen) return
       isOpen = false
-      menu.classList.remove('header__sm-menu--active')
-      btn.classList.remove('is-active')
-      btn.setAttribute('aria-expanded', 'false')
+      menu.classList.remove('is-open')
       menu.setAttribute('aria-hidden', 'true')
+      btn.setAttribute('aria-expanded', 'false')
       document.body.classList.remove('menu-open')
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.width = ''
-      // `behavior: instant` beats the html{scroll-behavior:smooth} rule, which
-      // would otherwise animate the restore and look like a jump.
-      window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
+      if (returnFocus) btn.focus({ preventScroll: true })
     }
 
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation()
-      isOpen ? close() : open()
-    })
+    btn.addEventListener('click', () => (isOpen ? close(true) : open()))
+    $$('[data-menu-close]', menu).forEach((el) => el.addEventListener('click', () => close(true)))
 
-    // The overlay's own X — the header button sits beneath the overlay and is
-    // not tappable while the menu is open.
-    $$('[data-menu-close]', menu).forEach((closeBtn) => {
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation()
-        close()
-        btn.focus({ preventScroll: true })
-      })
-    })
-
-    links.forEach((link) => {
+    $$('a[href]', menu).forEach((link) => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href') || ''
-        const target = href.startsWith('/#') ? $(href.slice(1)) : null
-
-        close()
-
-        // Let the overlay finish closing before scrolling to an in-page anchor.
+        const hash = href.indexOf('#') > -1 ? href.slice(href.indexOf('#')) : ''
+        const samePage = href.startsWith('#') || href.startsWith('/#') && location.pathname === '/'
+        const target = samePage && hash.length > 1 ? document.getElementById(hash.slice(1)) : null
+        close(false)
         if (target) {
           e.preventDefault()
+          // Let the overlay fade before the page moves underneath it.
           setTimeout(() => {
             target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' })
-            history.replaceState(null, '', href)
-          }, 260)
+            history.replaceState(null, '', hash)
+          }, 220)
         }
       })
-    })
-
-    // Click on the backdrop (outside the menu content) closes it.
-    menu.addEventListener('click', (e) => {
-      if (!e.target.closest('.header__sm-menu-content')) close()
     })
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        close()
-        btn.focus()
-      }
+      if (e.key === 'Escape' && isOpen) close(true)
     })
 
-    // Never leave the overlay stuck open when resizing up to desktop.
-    let resizeTimer
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(() => {
-        if (isOpen && window.innerWidth > 900) close()
-      }, 120)
+    window.matchMedia('(min-width: 961px)').addEventListener('change', (mq) => {
+      if (mq.matches) close(false)
     })
-  })()
-
-  /* ------------------------------------------------------------------
-     Logo → home
-     ------------------------------------------------------------------ */
-  ;(function logoLink() {
-    const logo = $('.header__logo-container')
-    if (!logo) return
-    logo.addEventListener('click', () => { location.href = '/' })
-    logo.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = '/' }
-    })
-  })()
-
-  /* ------------------------------------------------------------------
-     Header shrink + scroll progress + back-to-top
-     ------------------------------------------------------------------ */
-  ;(function scrollChrome() {
-    const header = $('.header')
-    const bar = $('.scroll-progress')
-    const toTop = $('.to-top')
-    let ticking = false
-
-    function paint() {
-      const y = window.scrollY
-      const max = document.documentElement.scrollHeight - window.innerHeight
-
-      if (header) header.classList.toggle('header--scrolled', y > 24)
-      if (bar) bar.style.transform = `scaleX(${max > 0 ? Math.min(y / max, 1) : 0})`
-      if (toTop) toTop.classList.toggle('is-visible', y > 620)
-
-      ticking = false
-    }
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) { window.requestAnimationFrame(paint); ticking = true }
-    }, { passive: true })
-
-    paint()
-
-    if (toTop) {
-      toTop.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' })
-      })
-    }
-  })()
-
-  /* ------------------------------------------------------------------
-     Cursor spotlight (pointer devices only)
-     ------------------------------------------------------------------ */
-  ;(function cursorGlow() {
-    const glow = $('.cursor-glow')
-    if (!glow || prefersReduced) return
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-
-    let x = window.innerWidth / 2
-    let y = window.innerHeight / 2
-    let cx = x
-    let cy = y
-    let running = false
-
-    function loop() {
-      cx += (x - cx) * 0.12
-      cy += (y - cy) * 0.12
-      glow.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`
-      if (running) requestAnimationFrame(loop)
-    }
-
-    window.addEventListener('mousemove', (e) => {
-      x = e.clientX
-      y = e.clientY
-      if (!running) { running = true; glow.classList.add('is-on'); requestAnimationFrame(loop) }
-    }, { passive: true })
-
-    document.addEventListener('mouseleave', () => glow.classList.remove('is-on'))
-    document.addEventListener('mouseenter', () => glow.classList.add('is-on'))
-  })()
-
-  /* ------------------------------------------------------------------
-     Pointer-tracked sheen on cards
-     ------------------------------------------------------------------ */
-  ;(function cardSheen() {
-    if (prefersReduced) return
-    const cards = $$('.glass-card, .about__content-main, .about__content-skills, .projects__card, .contact__form-container, .code-window')
-    cards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const r = card.getBoundingClientRect()
-        card.style.setProperty('--mx', `${e.clientX - r.left}px`)
-        card.style.setProperty('--my', `${e.clientY - r.top}px`)
-      }, { passive: true })
-    })
-  })()
-
-  /* ------------------------------------------------------------------
-     Magnetic buttons
-     ------------------------------------------------------------------ */
-  ;(function magnetic() {
-    if (prefersReduced) return
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-
-    $$('[data-magnetic]').forEach((el) => {
-      const strength = 0.28
-      el.addEventListener('mousemove', (e) => {
-        const r = el.getBoundingClientRect()
-        const dx = (e.clientX - (r.left + r.width / 2)) * strength
-        const dy = (e.clientY - (r.top + r.height / 2)) * strength
-        el.style.transform = `translate(${dx}px, ${dy - 3}px)`
-      }, { passive: true })
-      el.addEventListener('mouseleave', () => { el.style.transform = '' })
-    })
-  })()
-
-  /* ------------------------------------------------------------------
-     Hero: typing role line
-     ------------------------------------------------------------------ */
-  ;(function typeRoles() {
-    const out = $('.home-hero__typed')
-    if (!out) return
-
-    let roles = []
-    try { roles = JSON.parse(out.dataset.roles || '[]') } catch (_) { roles = [] }
-    if (!roles.length) return
-
-    if (prefersReduced) { out.textContent = roles[0]; return }
-
-    let roleIdx = 0
-    let charIdx = 0
-    let deleting = false
-
-    function tick() {
-      const role = roles[roleIdx]
-      charIdx += deleting ? -1 : 1
-      out.textContent = role.slice(0, charIdx)
-
-      let delay = deleting ? 38 : 74
-
-      if (!deleting && charIdx === role.length) {
-        delay = 1900
-        deleting = true
-      } else if (deleting && charIdx === 0) {
-        deleting = false
-        roleIdx = (roleIdx + 1) % roles.length
-        delay = 380
-      }
-      setTimeout(tick, delay)
-    }
-
-    setTimeout(tick, 900)
-  })()
-
-  /* ------------------------------------------------------------------
-     Count-up stats
-     ------------------------------------------------------------------ */
-  ;(function countUp() {
-    const nums = $$('[data-count]')
-    if (!nums.length) return
-
-    if (prefersReduced || !('IntersectionObserver' in window)) {
-      nums.forEach((n) => { n.textContent = n.dataset.count })
-      return
-    }
-
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return
-        const el = entry.target
-        io.unobserve(el)
-
-        const target = parseFloat(el.dataset.count) || 0
-        const duration = 1400
-        const start = performance.now()
-
-        function step(now) {
-          const p = Math.min((now - start) / duration, 1)
-          const eased = 1 - Math.pow(1 - p, 3)
-          el.textContent = Math.round(target * eased)
-          if (p < 1) requestAnimationFrame(step)
-          else el.textContent = target
-        }
-        requestAnimationFrame(step)
-      })
-    }, { threshold: 0.4 })
-
-    nums.forEach((n) => io.observe(n))
   })()
 
   /* ------------------------------------------------------------------
      Scroll-spy for the desktop nav
      ------------------------------------------------------------------ */
   ;(function scrollSpy() {
-    const links = $$('.header__link[href*="#"]')
-    if (!links.length || !('IntersectionObserver' in window)) return
+    const links = $$('.nav__link[href*="#"]')
+    if (!links.length || !hasIO) return
 
     const map = new Map()
     links.forEach((link) => {
@@ -309,220 +103,13 @@
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return
-        links.forEach((l) => l.classList.remove('header__link--active'))
+        links.forEach((l) => l.classList.remove('is-active'))
         const active = map.get(entry.target)
-        if (active) active.classList.add('header__link--active')
+        if (active) active.classList.add('is-active')
       })
-    }, { rootMargin: '-45% 0px -50% 0px' })
+    }, { rootMargin: '-40% 0px -55% 0px' })
 
     map.forEach((_, section) => io.observe(section))
-  })()
-
-  /* ------------------------------------------------------------------
-     Projects slider
-     ------------------------------------------------------------------ */
-  ;(function projectsSlider() {
-    const slider = document.getElementById('projectsSlider')
-    const track = document.getElementById('projectsTrack')
-    const nav = document.getElementById('projectsNav')
-    const prevBtn = document.getElementById('projectsPrev')
-    const nextBtn = document.getElementById('projectsNext')
-    const dotsWrap = document.getElementById('projectsDots')
-    const counter = document.getElementById('projectsCounter')
-    if (!slider || !track) return
-
-    const slides = $$('.projects__card', track)
-    const total = slides.length
-    if (!total) return
-
-    let page = 0
-    // 0, not 1: `measure()` bails when the count is unchanged, and a phone-width
-    // first paint really does resolve to 1 — seeding it here would skip the
-    // initial build entirely.
-    let perView = 0
-    let pages = 1
-    let autoTimer = null
-    const AUTO_MS = 5500
-
-    // CSS owns the breakpoints (--per-view on .projects__track); reading the
-    // computed value keeps paging and layout from ever disagreeing.
-    function readPerView() {
-      const raw = parseInt(getComputedStyle(track).getPropertyValue('--per-view'), 10)
-      const n = Number.isFinite(raw) && raw > 0 ? raw : 1
-      return Math.min(n, total)
-    }
-
-    // Index of the first card on a page. The final page is pulled flush with
-    // the right edge so a partial row never leaves dead space.
-    function firstIndexOf(p) {
-      return Math.min(p * perView, Math.max(0, total - perView))
-    }
-
-    function offsetOf(p) {
-      const first = slides[firstIndexOf(p)]
-      if (!first) return 0
-      return first.offsetLeft - slides[0].offsetLeft
-    }
-
-    function buildDots() {
-      if (!dotsWrap) return
-      dotsWrap.innerHTML = ''
-      for (let i = 0; i < pages; i++) {
-        const dot = document.createElement('button')
-        dot.type = 'button'
-        dot.className = 'projects__dot'
-        dot.setAttribute('aria-label', `Go to project page ${i + 1}`)
-        dot.addEventListener('click', () => goTo(i, true))
-        dotsWrap.appendChild(dot)
-      }
-    }
-
-    function update() {
-      track.style.transform = `translate3d(${-offsetOf(page)}px, 0, 0)`
-      if (dotsWrap) {
-        $$('.projects__dot', dotsWrap).forEach((d, i) => {
-          d.classList.toggle('projects__dot--active', i === page)
-        })
-      }
-      if (counter) {
-        counter.textContent = `${String(page + 1).padStart(2, '0')} / ${String(pages).padStart(2, '0')}`
-      }
-      if (prevBtn) prevBtn.disabled = pages <= 1
-      if (nextBtn) nextBtn.disabled = pages <= 1
-      if (nav) nav.classList.toggle('projects__nav--hidden', pages <= 1)
-    }
-
-    // Re-derive the page count whenever the breakpoint moves under us.
-    function measure() {
-      const nextPerView = readPerView()
-      if (nextPerView === perView) return false
-      perView = nextPerView
-      pages = Math.max(1, Math.ceil(total / perView))
-      page = Math.min(page, pages - 1)
-      buildDots()
-      return true
-    }
-
-    function goTo(i, userAction) {
-      page = (i + pages) % pages
-      update()
-      if (userAction) restartAuto()
-    }
-    const next = (u) => goTo(page + 1, u)
-    const prev = (u) => goTo(page - 1, u)
-
-    if (prevBtn) prevBtn.addEventListener('click', () => prev(true))
-    if (nextBtn) nextBtn.addEventListener('click', () => next(true))
-
-    document.addEventListener('keydown', (e) => {
-      if (document.body.classList.contains('menu-open')) return
-      const r = slider.getBoundingClientRect()
-      if (!(r.top < window.innerHeight && r.bottom > 0)) return
-      if (e.key === 'ArrowRight') next(true)
-      if (e.key === 'ArrowLeft') prev(true)
-    })
-
-    // Drag / swipe
-    let startX = 0
-    let startY = 0
-    let deltaX = 0
-    let dragging = false
-    let locked = null
-    const THRESHOLD = 50
-
-    function onStart(x, y) {
-      startX = x; startY = y; deltaX = 0; dragging = true; locked = null
-      track.style.transition = 'none'
-    }
-    function onMove(x, y) {
-      if (!dragging) return
-      const dx = x - startX
-      const dy = y - startY
-      if (locked === null) {
-        // Only hijack the gesture once it is clearly horizontal.
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return
-        locked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'
-      }
-      if (locked !== 'x') return
-      deltaX = dx
-      track.style.transform = `translate3d(${-offsetOf(page) + deltaX}px, 0, 0)`
-    }
-    function onEnd() {
-      if (!dragging) return
-      dragging = false
-      track.style.transition = ''
-      if (locked === 'x' && Math.abs(deltaX) > THRESHOLD) {
-        deltaX < 0 ? next(true) : prev(true)
-      } else {
-        update()
-      }
-      locked = null
-    }
-
-    slider.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX, e.touches[0].clientY), { passive: true })
-    slider.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX, e.touches[0].clientY), { passive: true })
-    slider.addEventListener('touchend', onEnd)
-    slider.addEventListener('touchcancel', onEnd)
-
-    slider.addEventListener('mousedown', (e) => {
-      if (e.target.closest('a, button')) return
-      e.preventDefault()
-      onStart(e.clientX, e.clientY)
-    })
-    window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY))
-    window.addEventListener('mouseup', onEnd)
-
-    function startAuto() {
-      // `document.hidden` covers the load-in-a-background-tab case, where no
-      // visibilitychange ever fires and the deck would otherwise have paged on
-      // before anyone looked at it.
-      if (pages <= 1 || prefersReduced || document.hidden) return
-      stopAuto()
-      autoTimer = setInterval(() => next(false), AUTO_MS)
-    }
-    function stopAuto() { if (autoTimer) { clearInterval(autoTimer); autoTimer = null } }
-    function restartAuto() { stopAuto(); startAuto() }
-
-    slider.addEventListener('mouseenter', stopAuto)
-    slider.addEventListener('mouseleave', startAuto)
-    slider.addEventListener('focusout', startAuto)
-    document.addEventListener('visibilitychange', () => {
-      document.hidden ? stopAuto() : startAuto()
-    })
-
-    // Tabbing into an off-screen card would otherwise leave focus invisible;
-    // page to it instead of hiding those cards from assistive tech.
-    slider.addEventListener('focusin', (e) => {
-      stopAuto()
-      const card = e.target.closest('.projects__card')
-      if (!card) return
-      const i = slides.indexOf(card)
-      if (i < 0) return
-      const target = Math.min(Math.floor(i / perView), pages - 1)
-      if (target !== page) goTo(target, false)
-    })
-
-    // The browser may try to scroll a focused card into view; the track's
-    // transform is the only thing allowed to move.
-    slider.addEventListener('scroll', () => { slider.scrollLeft = 0 })
-
-    let resizeTimer = null
-    window.addEventListener('resize', () => {
-      // Skip the reflow animation while the viewport is still in motion.
-      track.style.transition = 'none'
-      if (resizeTimer) clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(() => {
-        measure()
-        update()
-        track.style.transition = ''
-        restartAuto()
-      }, 150)
-      update()
-    })
-
-    measure()
-    update()
-    startAuto()
   })()
 
   /* ------------------------------------------------------------------
@@ -532,23 +119,35 @@
     const targets = $$('[data-reveal]')
     if (!targets.length) return
 
-    if (prefersReduced || !('IntersectionObserver' in window)) {
-      targets.forEach((el) => el.classList.add('is-visible'))
+    if (prefersReduced || !hasIO) {
+      targets.forEach((el) => el.classList.add('is-in'))
       return
     }
 
-    targets.forEach((el) => el.classList.add('reveal'))
+    targets.forEach((el) => {
+      el.classList.add('reveal')
+      if (el.dataset.delay) el.style.setProperty('--delay', el.dataset.delay)
+    })
 
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return
-        entry.target.classList.add('is-visible')
+        entry.target.classList.add('is-in')
         io.unobserve(entry.target)
       })
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' })
 
     targets.forEach((el) => io.observe(el))
   })()
+
+  /* ------------------------------------------------------------------
+     Back to top
+     ------------------------------------------------------------------ */
+  $$('[data-to-top]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' })
+    })
+  })
 
   /* ------------------------------------------------------------------
      Success modal
@@ -559,12 +158,14 @@
 
     function open() {
       el.classList.add('is-open')
+      el.setAttribute('aria-hidden', 'false')
       document.body.classList.add('modal-open')
-      const cta = $('.btn-success', el)
+      const cta = $('[data-modal-close]', el)
       if (cta) cta.focus()
     }
     function close() {
       el.classList.remove('is-open')
+      el.setAttribute('aria-hidden', 'true')
       document.body.classList.remove('modal-open')
     }
 
@@ -581,7 +182,7 @@
   })()
 
   /* ------------------------------------------------------------------
-     Contact form — posts to Django, which emails the lead (no storage)
+     Contact form: posts to Django, which emails the lead (no storage)
      ------------------------------------------------------------------ */
   ;(function contactForm() {
     const form = document.getElementById('contactForm')
@@ -592,7 +193,7 @@
     const fields = ['name', 'email', 'message']
 
     /* ----------------------------------------------------------------
-       Spam policy — a mirror of portfolio/spam_filter.py for instant
+       Spam policy: a mirror of portfolio/spam_filter.py for instant
        feedback. The server re-checks everything, so this list only has
        to be good enough to catch honest mistakes; keep it roughly in
        sync with the Python tables, which are the source of truth.
@@ -781,7 +382,7 @@
       }
 
       if (btn) btn.disabled = true
-      setLabel('Sending…')
+      setLabel('Sending')
 
       try {
         const res = await fetch(form.action, {
@@ -802,10 +403,10 @@
           showError(fields.includes(field) ? field : 'form', message)
         }
       } catch (_) {
-        showError('form', 'Network error — please check your connection and try again.')
+        showError('form', 'Network error. Please check your connection and try again.')
       } finally {
         if (btn) btn.disabled = false
-        setLabel('Send Message')
+        setLabel('Send message')
       }
     })
   })()

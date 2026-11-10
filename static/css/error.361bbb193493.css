@@ -1,0 +1,122 @@
+/* ==========================================================================
+   404 page. Same tokens as the main site, kept standalone so the error page
+   never depends on the main stylesheet loading.
+   ========================================================================== */
+:root {
+  --ink: #1e1e1e;
+  --lime: #85ee00;
+  --moss-1: #0b1a0c;
+  --font: 'Inter Tight', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 100%; }
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font);
+  color: #fff;
+  background: var(--moss-1);
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.ambient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 70% at 72% 18%, rgba(63, 160, 44, .5), transparent 70%),
+    radial-gradient(45% 55% at 30% 95%, rgba(29, 100, 30, .55), transparent 70%),
+    linear-gradient(180deg, #0a150b 0%, #0d1f0e 50%, #0b180c 100%);
+}
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+}
+.blob--a { width: 46vw; height: 46vw; right: -8vw; top: -12vw; background: radial-gradient(circle, #3f9a2a 0%, rgba(63,154,42,0) 65%); }
+.blob--b { width: 34vw; height: 34vw; left: 18vw; bottom: -14vw; background: radial-gradient(circle, #1f6a1f 0%, rgba(31,106,31,0) 65%); }
+
+.err {
+  width: min(100%, 52rem);
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+.paren {
+  font-size: .95rem;
+  font-weight: 500;
+}
+.paren::before { content: "( "; color: rgba(255,255,255,.45); }
+.paren::after  { content: " )"; color: rgba(255,255,255,.45); }
+
+.err__code {
+  font-size: clamp(3.4rem, 10vw, 8.5rem);
+  font-weight: 500;
+  line-height: .94;
+  letter-spacing: -.035em;
+}
+
+.err__sub {
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, .62);
+  max-width: 44ch;
+  line-height: 1.35;
+}
+
+.err__cta { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .5rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  height: 52px;
+  padding: 0 1.5rem 0 .375rem;
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--ink);
+  font-size: .95rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: transform .25s var(--ease-out), background .25s var(--ease-out);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn__ico {
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: .85rem;
+}
+.fa-ne { rotate: -45deg; }
+.btn--glass { background: rgba(255,255,255,.12); color: #fff; }
+.btn--glass:hover { background: rgba(255,255,255,.2); }
+.btn--glass .btn__ico { background: #fff; color: var(--ink); }
+
+:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .err > * {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: rise .8s var(--ease-out) forwards;
+  }
+  .err > :nth-child(2) { animation-delay: .08s; }
+  .err > :nth-child(3) { animation-delay: .16s; }
+  .err > :nth-child(4) { animation-delay: .24s; }
+}
+@keyframes rise { to { opacity: 1; transform: none; } }
