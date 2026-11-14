@@ -25,12 +25,12 @@
         <p class="two-tone">{{ project.short_description|striptags }}</p>
         <div class="cs-hero__cta">
           {% if project.live_link %}
-          <a href="{{ project.live_link }}" class="btn" target="_blank" rel="noreferrer">
+          <a href="{{ project.live_link }}" class="btn" target="_blank" rel="noreferrer" data-magnetic>
             <span class="btn__ico"><i class="fa-solid fa-arrow-right fa-ne"></i><i class="fa-solid fa-arrow-right fa-ne"></i></span>
             Live site
           </a>
           {% endif %}
-          <a href="/#projects" class="btn btn--glass">
+          <a href="/#projects" class="btn btn--glass" data-magnetic>
             <span class="btn__ico btn__ico--right"><i class="fa-solid fa-arrow-right"></i><i class="fa-solid fa-arrow-right"></i></span>
             Projects
           </a>

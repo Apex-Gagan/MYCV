@@ -55,7 +55,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .paren {
-  font-size: .95rem;
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: .82rem;
   font-weight: 500;
 }
 .paren::before { content: "( "; color: rgba(255,255,255,.45); }
