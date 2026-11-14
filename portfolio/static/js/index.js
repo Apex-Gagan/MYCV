@@ -100,44 +100,206 @@
     })
     if (!map.size) return
 
+    // A pill slides behind the active link; it hides again at the top of the page.
+    const indicator = $('.nav__indicator')
+    function moveIndicator(link) {
+      if (!indicator) return
+      if (!link) { indicator.classList.remove('is-on'); return }
+      indicator.style.width = `${link.offsetWidth}px`
+      indicator.style.transform = `translateX(${link.offsetLeft}px)`
+      indicator.classList.add('is-on')
+    }
+
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return
         links.forEach((l) => l.classList.remove('is-active'))
         const active = map.get(entry.target)
         if (active) active.classList.add('is-active')
+        moveIndicator(active)
       })
     }, { rootMargin: '-40% 0px -55% 0px' })
 
     map.forEach((_, section) => io.observe(section))
+
+    const hero = $('.hero')
+    if (hero) {
+      const heroIO = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          links.forEach((l) => l.classList.remove('is-active'))
+          moveIndicator(null)
+        }
+      }, { rootMargin: '-40% 0px -55% 0px' })
+      heroIO.observe(hero)
+    }
+
+    window.addEventListener('resize', () => moveIndicator($('.nav__link.is-active')))
+  })()
+
+  /* ------------------------------------------------------------------
+     Terminal panel: types each command, prints its output, once, when
+     the panel scrolls into view. Reduced motion shows the whole session.
+     ------------------------------------------------------------------ */
+  ;(function terminal() {
+    const box = $('[data-term]')
+    const out = box && $('#termOut', box)
+    if (!box || !out) return
+
+    let lines = []
+    try { lines = JSON.parse(box.dataset.termLines || '[]') } catch (_) { lines = [] }
+    if (!lines.length) return
+
+    const span = (cls, text) => {
+      const el = document.createElement('span')
+      el.className = cls
+      el.textContent = text
+      return el
+    }
+    const prompt = () => out.appendChild(span('term__prompt', '$ '))
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+    function showAll() {
+      lines.forEach((l) => {
+        prompt()
+        out.appendChild(span('term__cmd', `${l.cmd}\n`))
+        l.out.forEach((o) => out.appendChild(span('term__out', `${o}\n`)))
+      })
+      prompt()
+    }
+
+    async function play() {
+      for (const l of lines) {
+        prompt()
+        const cmd = out.appendChild(span('term__cmd', ''))
+        for (const ch of l.cmd) {
+          cmd.textContent += ch
+          await sleep(26 + Math.random() * 44)
+        }
+        await sleep(280)
+        cmd.textContent += '\n'
+        for (const o of l.out) {
+          out.appendChild(span('term__out', `${o}\n`))
+          await sleep(80)
+        }
+        await sleep(520)
+      }
+      prompt()
+    }
+
+    if (prefersReduced || !hasIO) { showAll(); return }
+
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      io.disconnect()
+      play()
+    }, { threshold: 0.35 })
+    io.observe(box)
+  })()
+
+  /* ------------------------------------------------------------------
+     Count-up for the facts row
+     ------------------------------------------------------------------ */
+  ;(function countUp() {
+    const nums = $$('[data-count]')
+    if (!nums.length) return
+    const finish = (n) => { n.textContent = n.dataset.count }
+
+    if (prefersReduced || !hasIO) { nums.forEach(finish); return }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        const el = entry.target
+        io.unobserve(el)
+        const target = parseFloat(el.dataset.count) || 0
+        const duration = 1200
+        const start = performance.now()
+        const step = (now) => {
+          const p = Math.min((now - start) / duration, 1)
+          const eased = 1 - Math.pow(1 - p, 3)
+          el.textContent = Math.round(target * eased)
+          if (p < 1) requestAnimationFrame(step)
+          else finish(el)
+        }
+        requestAnimationFrame(step)
+      })
+    }, { threshold: 0.5 })
+
+    nums.forEach((n) => io.observe(n))
+  })()
+
+  /* ------------------------------------------------------------------
+     Magnetic buttons (pointer devices only)
+     ------------------------------------------------------------------ */
+  ;(function magnetic() {
+    if (prefersReduced) return
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    $$('[data-magnetic]').forEach((el) => {
+      const strength = 0.22
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect()
+        const dx = (e.clientX - (r.left + r.width / 2)) * strength
+        const dy = (e.clientY - (r.top + r.height / 2)) * strength
+        el.style.transform = `translate(${dx.toFixed(1)}px, ${(dy - 2).toFixed(1)}px)`
+      }, { passive: true })
+      el.addEventListener('mouseleave', () => { el.style.transform = '' })
+    })
   })()
 
   /* ------------------------------------------------------------------
      Reveal on scroll
      ------------------------------------------------------------------ */
   ;(function reveal() {
-    const targets = $$('[data-reveal]')
-    if (!targets.length) return
+    // data-reveal            fade and rise (data-reveal="mask" rises out of a clip)
+    // data-reveal-stagger=N  reveal each child N ms after the previous one
+    const singles = $$('[data-reveal]')
+    const groups = $$('[data-reveal-stagger]')
+    if (!singles.length && !groups.length) return
 
-    if (prefersReduced || !hasIO) {
-      targets.forEach((el) => el.classList.add('is-in'))
-      return
+    const prep = (el, variant, delay) => {
+      el.classList.add('reveal')
+      if (variant) el.classList.add(`reveal--${variant}`)
+      if (delay) el.style.setProperty('--delay', delay)
+      // The mask slides an inner box; wrap the element's content in one.
+      if (variant === 'mask' && !el.querySelector(':scope > .mask__inner')) {
+        const inner = document.createElement('span')
+        inner.className = 'mask__inner'
+        while (el.firstChild) inner.appendChild(el.firstChild)
+        el.appendChild(inner)
+      }
     }
 
-    targets.forEach((el) => {
-      el.classList.add('reveal')
-      if (el.dataset.delay) el.style.setProperty('--delay', el.dataset.delay)
+    const groupKids = new Map()
+    groups.forEach((group) => {
+      const step = parseInt(group.dataset.revealStagger, 10) || 70
+      const kids = Array.from(group.children)
+      kids.forEach((kid, i) => prep(kid, null, `${i * step}ms`))
+      groupKids.set(group, kids)
     })
+    singles.forEach((el) => prep(el, el.dataset.reveal || null, el.dataset.delay))
+
+    const show = (el) => {
+      const kids = groupKids.get(el)
+      if (kids) kids.forEach((kid) => kid.classList.add('is-in'))
+      else el.classList.add('is-in')
+    }
+    const all = singles.concat(groups)
+
+    if (prefersReduced || !hasIO) {
+      all.forEach(show)
+      return
+    }
 
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return
-        entry.target.classList.add('is-in')
+        show(entry.target)
         io.unobserve(entry.target)
       })
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' })
 
-    targets.forEach((el) => io.observe(el))
+    all.forEach((el) => io.observe(el))
   })()
 
   /* ------------------------------------------------------------------

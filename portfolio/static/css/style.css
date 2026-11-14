@@ -41,8 +41,10 @@
   --ease-io:  cubic-bezier(.65, 0, .35, 1);
   --dur: .55s;
 
-  /* Type */
+  /* Type: Inter Tight for everything you read, JetBrains Mono for the
+     labels, counters and tags that sit around it. */
   --font: 'Inter Tight', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 }
 
 /* Semantic tokens per theme */
@@ -184,34 +186,26 @@ section[data-theme], footer[data-theme] {
   max-width: 60ch;
 }
 
-/* Two-tone paragraph: everything at full strength; the second clause is
-   marked with a lime wavy underline instead of being greyed out. */
+/* Lead paragraph: one tone throughout, no greying and no underline. */
 .two-tone {
   font-size: clamp(1.35rem, 2.2vw, 2rem);
   font-weight: 500;
-  line-height: 1.32;
+  line-height: 1.24;
   letter-spacing: -.02em;
   color: var(--fg);
   text-wrap: pretty;
 }
-.two-tone span,
-.squiggle {
-  color: inherit;
-  text-decoration-line: underline;
-  text-decoration-style: wavy;
-  text-decoration-color: var(--lime);
-  text-decoration-thickness: .075em;
-  text-underline-offset: .16em;
-  text-decoration-skip-ink: none;
-}
+.two-tone span { color: inherit; }
 
-/* "( Label )" meta: the parentheses recede, the word stays. */
+/* "( Label )" meta in mono: the parentheses recede, the word stays. */
 .paren {
   display: inline-flex;
   align-items: center;
-  gap: .35em;
-  font-size: .95rem;
+  gap: .4em;
+  font-family: var(--font-mono);
+  font-size: .82rem;
   font-weight: 500;
+  letter-spacing: -.01em;
   color: var(--fg);
   white-space: nowrap;
 }
@@ -235,8 +229,11 @@ section[data-theme], footer[data-theme] {
   display: inline-flex;
   align-items: center;
   gap: .6rem;
-  font-size: .95rem;
+  font-family: var(--font-mono);
+  font-size: .78rem;
   font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
   color: var(--fg);
 }
 .eyebrow::before {
@@ -245,6 +242,26 @@ section[data-theme], footer[data-theme] {
   border-radius: 50%;
   background: var(--lime);
 }
+.eyebrow--plain { color: var(--fg-2); }
+.eyebrow--plain::before { display: none; }
+
+/* Scroll progress: a lime hairline across the top driven by the scroll
+   position itself, no JS. Browsers without scroll timelines never show it. */
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 70;
+  width: 100%;
+  height: 2px;
+  background: var(--lime);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .progress { animation: progress-grow linear both; animation-timeline: scroll(root); }
+}
+@keyframes progress-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 .hairline {
   border: 0;
@@ -337,12 +354,13 @@ section[data-theme], footer[data-theme] {
 .chip {
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding: 0 .95rem;
+  height: 34px;
+  padding: 0 .9rem;
   border-radius: var(--r-pill);
   background: var(--chip);
   color: var(--chip-fg);
-  font-size: .85rem;
+  font-family: var(--font-mono);
+  font-size: .76rem;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -404,21 +422,38 @@ section[data-theme], footer[data-theme] {
 }
 
 .nav__links {
+  position: relative;
   display: flex;
   align-items: center;
   gap: .25rem;
   margin-left: auto;
 }
+/* Pill that slides behind whichever link's section is on screen */
+.nav__indicator {
+  position: absolute;
+  left: 0; top: 50%;
+  height: 36px;
+  width: 0;
+  translate: 0 -50%;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, .1);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .45s var(--ease-out), width .45s var(--ease-out), opacity .3s;
+}
+.nav__indicator.is-on { opacity: 1; }
 .nav__link {
+  position: relative;
+  z-index: 1;
   display: inline-block;
   padding: .55rem .9rem;
   border-radius: var(--r-pill);
   font-size: .95rem;
   font-weight: 500;
   color: rgba(255, 255, 255, .78);
-  transition: color .2s, background .2s;
+  transition: color .2s;
 }
-.nav__link:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+.nav__link:hover { color: #fff; }
 .nav__link.is-active { color: #fff; }
 
 .nav__cta { height: 48px; margin-left: .5rem; }
@@ -519,10 +554,21 @@ section[data-theme], footer[data-theme] {
   align-items: start;
   flex: 1;
 }
-.hero__title {
+.hero__intro {
+  display: grid;
+  gap: 1.1rem;
+  align-content: start;
   margin-top: .5rem;
-  color: #fff;
 }
+.hero__title { color: #fff; }
+/* Each line sits in a clipped box so it can rise into view on load */
+.hero__title .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: .08em;
+  margin-bottom: -.08em;
+}
+.hero__title .line > span { display: block; }
 .hero__aside {
   padding-top: clamp(.5rem, 2vw, 1.5rem);
   display: grid;
@@ -563,12 +609,17 @@ section[data-theme], footer[data-theme] {
 
 /* Entrance: the headline arrives first, the rest follows. */
 @media (prefers-reduced-motion: no-preference) {
-  .hero__title, .hero__aside > *, .hero__foot > * {
+  .hero__intro > .eyebrow, .hero__aside > *, .hero__foot > * {
     opacity: 0;
     transform: translateY(22px);
     animation: rise .9s var(--ease-out) forwards;
   }
-  .hero__title { animation-delay: .05s; }
+  .hero__title .line > span {
+    transform: translateY(110%);
+    animation: line-up 1.1s var(--ease-out) forwards;
+  }
+  .hero__title .line:nth-child(2) > span { animation-delay: .12s; }
+  .hero__intro > .eyebrow { animation-delay: .5s; }
   .hero__aside > :nth-child(1) { animation-delay: .25s; }
   .hero__aside > :nth-child(2) { animation-delay: .35s; }
   .hero__aside > :nth-child(3) { animation-delay: .45s; }
@@ -580,6 +631,7 @@ section[data-theme], footer[data-theme] {
   .hero__blob--c { animation: drift 26s var(--ease-io) infinite alternate; }
 }
 @keyframes rise { to { opacity: 1; transform: none; } }
+@keyframes line-up { to { transform: none; } }
 @keyframes drift {
   from { transform: translate3d(0, 0, 0) scale(1); }
   to   { transform: translate3d(-6vw, 4vh, 0) scale(1.08); }
@@ -687,28 +739,25 @@ section[data-theme], footer[data-theme] {
 .stackcard__num {
   grid-column: 1;
   grid-row: 1;
-  padding-top: .55em;
-  font-size: .85rem;
+  padding-top: .75em;
+  font-family: var(--font-mono);
+  font-size: .8rem;
   font-weight: 500;
-  color: var(--fg-2);
+  color: var(--lime);
 }
 .stackcard__title {
   grid-column: 2;
   grid-row: 1;
   font-size: clamp(1.9rem, 3.6vw, 3.6rem);
   font-weight: 500;
-  line-height: 1.1;
+  line-height: 1;
   letter-spacing: -.03em;
   text-transform: uppercase;
   text-wrap: balance;
   overflow-wrap: anywhere;
-  text-decoration-line: underline;
-  text-decoration-style: wavy;
-  text-decoration-color: var(--lime);
-  text-decoration-thickness: .05em;
-  text-underline-offset: .14em;
-  text-decoration-skip-ink: none;
+  transition: transform .5s var(--ease-out);
 }
+.stackcard__link:hover .stackcard__title { transform: translateX(6px); }
 .stackcard__arrow {
   grid-column: 3;
   grid-row: 1;
@@ -805,22 +854,57 @@ section[data-theme], footer[data-theme] {
   width: 100%; height: 100%;
   object-fit: cover;
 }
-/* Three real project screenshots, one tall and two stacked */
-.mosaic {
+/* Terminal panel: a real session typed out by index.js */
+.term {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  padding: 8px;
+  grid-template-rows: auto 1fr;
+  min-height: 460px;
+  border-radius: var(--r-card);
+  background: var(--ink);
+  border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  color: #fff;
 }
-.mosaic__img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: top left;
-  border-radius: 12px;
-  background: var(--ink-3);
+.term__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .85rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: rgba(255, 255, 255, .55);
 }
-.mosaic__img--1 { grid-row: 1 / 3; }
+.term__screen {
+  margin: 0;
+  padding: 1.25rem 1.4rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: .84rem;
+  font-weight: 400;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, .88);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+}
+.term__prompt { color: var(--lime); }
+.term__cmd { color: #fff; }
+.term__out { color: rgba(255, 255, 255, .62); }
+.term__cursor {
+  display: inline-block;
+  width: .55em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -.18em;
+  background: var(--lime);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .term__cursor { animation: blink 1.1s steps(1) infinite; }
+}
+@keyframes blink { 50% { opacity: 0; } }
 .about__text { display: grid; gap: 1.75rem; }
 .facts {
   display: grid;
@@ -833,6 +917,7 @@ section[data-theme], footer[data-theme] {
   font-weight: 500;
   line-height: 1;
   letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
 }
 .fact__label {
   display: block;
@@ -902,9 +987,12 @@ section[data-theme], footer[data-theme] {
 }
 .field { display: grid; gap: .5rem; }
 .field label {
-  font-size: .9rem;
+  font-family: var(--font-mono);
+  font-size: .74rem;
   font-weight: 500;
-  color: var(--fg);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--fg-2);
 }
 .field input, .field textarea {
   width: 100%;
@@ -1032,7 +1120,7 @@ section[data-theme], footer[data-theme] {
   background: var(--bg-2);
   flex-wrap: wrap;
 }
-.footer__copy { color: var(--fg-2); font-size: .9rem; }
+.footer__copy { color: var(--fg-2); font-family: var(--font-mono); font-size: .78rem; }
 .footer__copy a { color: var(--lime); }
 
 /* ---------------------------------------------------------------
@@ -1126,6 +1214,49 @@ section[data-theme], footer[data-theme] {
     transition-delay: var(--delay, 0s);
   }
   .reveal.is-in { opacity: 1; transform: none; }
+
+  /* Headings rise out of a clipped box instead of fading. The box clips with
+     overflow (not clip-path, which stops IntersectionObserver from ever
+     seeing the element); the JS wraps the text in .mask__inner. */
+  .reveal--mask {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    overflow: hidden;
+    padding-bottom: .12em;
+    margin-bottom: -.12em;
+  }
+  .reveal--mask .mask__inner {
+    display: block;
+    transform: translateY(110%);
+    transition: transform .9s var(--ease-out);
+    transition-delay: var(--delay, 0s);
+  }
+  .reveal--mask.is-in .mask__inner { transform: none; }
+
+  /* Tool cards are dealt in flat and settle into their tilt, one after
+     another. Animation (not transition) so hover is never delayed after. */
+  .fan__card.reveal { opacity: 0; transition: none; }
+  .fan__card.reveal.is-in {
+    opacity: 1;
+    transition: rotate .5s var(--ease-out), translate .5s var(--ease-out), box-shadow .5s var(--ease-out);
+    animation: deal .9s var(--ease-out) backwards;
+    animation-delay: var(--delay, 0s);
+  }
+  .chip.reveal { opacity: 0; transition: none; }
+  .chip.reveal.is-in {
+    opacity: 1;
+    animation: pop .5s var(--ease-out) backwards;
+    animation-delay: var(--delay, 0s);
+  }
+}
+@keyframes deal {
+  from { opacity: 0; rotate: 0deg; translate: 0 56px; }
+  to   { opacity: 1; rotate: var(--tilt, 0deg); translate: 0 var(--lift, 0px); }
+}
+@keyframes pop {
+  from { opacity: 0; transform: translateY(10px) scale(.96); }
+  to   { opacity: 1; transform: none; }
 }
 
 /* Back-to-top sits in the footer bar; nothing floats over content. */
@@ -1161,6 +1292,8 @@ section[data-theme], footer[data-theme] {
 
   .about__grid { grid-template-columns: 1fr; }
   .about__media { aspect-ratio: 16 / 10; max-height: 380px; }
+  .term { min-height: 340px; }
+  .term__screen { font-size: .78rem; }
   .exp__row { grid-template-columns: 1fr; gap: .35rem; }
   .exp__dates { order: 3; }
 
